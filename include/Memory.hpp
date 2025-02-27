@@ -4,10 +4,9 @@
 #include "Types.hpp" 
 
 class Memory {
-private:
+public:
     static constexpr uint32_t SIZE = 64 * 1024; // 64KB
     Byte data[SIZE];
-public:
     Memory();
 
     Byte operator[](Word address) const;

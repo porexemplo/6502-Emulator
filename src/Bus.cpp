@@ -16,6 +16,12 @@ void Bus::Reset() {
     cpu.Reset();
 }
 
+void Bus::ClearMemory() {
+    for (uint32_t i = 0; i < Memory::SIZE; i++) {
+        memory[i] = 0;
+    }
+}
+
 void Bus::Exec(uint32_t cycles) {
     cpu.Execute(cycles);
 }

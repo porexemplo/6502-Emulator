@@ -1,0 +1,151 @@
+#include <gtest/gtest.h>
+#include "Bus.hpp"
+
+class M6502Test : public ::testing::Test {
+protected:
+
+    Bus bus;
+
+    void SetUp() override {
+        bus.Reset();
+    }
+
+    void TearDown() override {
+        bus.Reset();
+        bus.ClearMemory();
+    }
+};
+
+TEST_F(M6502Test, LDA_IM_CanLoadValueIntoAccumulator) {
+    bus.Write(0xFFFC, LDA_IM);
+    bus.Write(0xFFFD, 0x42);
+
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(2);
+
+    ASSERT_EQ(bus.cpu.AC, 0x42);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    EXPECT_FALSE(bus.cpu.Z);
+    EXPECT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.C, cpuCopy.C);
+    ASSERT_EQ(bus.cpu.I, cpuCopy.I);
+    ASSERT_EQ(bus.cpu.D, cpuCopy.D);
+    ASSERT_EQ(bus.cpu.B, cpuCopy.B);
+    ASSERT_EQ(bus.cpu.V, cpuCopy.V);
+}
+
+TEST_F(M6502Test, LDA_ZP_CanLoadZeroPageValueIntoAccumulator) {
+    bus.Write(0xFFFC, LDA_ZP);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x0042, 0x15);
+
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(3);
+
+    ASSERT_EQ(bus.cpu.AC, 0x15);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    EXPECT_FALSE(bus.cpu.Z);
+    EXPECT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.C, cpuCopy.C);
+    ASSERT_EQ(bus.cpu.I, cpuCopy.I);
+    ASSERT_EQ(bus.cpu.D, cpuCopy.D);
+    ASSERT_EQ(bus.cpu.B, cpuCopy.B);
+    ASSERT_EQ(bus.cpu.V, cpuCopy.V);
+}
+
+TEST_F(M6502Test, LDA_ZPX_CanLoadZeroPageValueIntoAccumulatorWithZeroPageX) {
+    bus.Write(0xFFFC, LDA_ZPX);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x0045, 0x15);
+
+    bus.cpu.X = 0x03;
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(4);
+
+    ASSERT_EQ(bus.cpu.AC, 0x15);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    EXPECT_FALSE(bus.cpu.Z);
+    EXPECT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.C, cpuCopy.C);
+    ASSERT_EQ(bus.cpu.I, cpuCopy.I);
+    ASSERT_EQ(bus.cpu.D, cpuCopy.D);
+    ASSERT_EQ(bus.cpu.B, cpuCopy.B);
+    ASSERT_EQ(bus.cpu.V, cpuCopy.V);
+}
+
+TEST_F(M6502Test, LDA_ZPX_CanLoadZeroPageValueIntoAccumulatorWhenItWraps) {
+    bus.Write(0xFFFC, LDA_ZPX);
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0x007F, 0x37);
+
+    bus.cpu.X = 0xFF;
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(4);
+
+    ASSERT_EQ(bus.cpu.AC, 0x37);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    EXPECT_FALSE(bus.cpu.Z);
+    EXPECT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.C, cpuCopy.C);
+    ASSERT_EQ(bus.cpu.I, cpuCopy.I);
+    ASSERT_EQ(bus.cpu.D, cpuCopy.D);
+    ASSERT_EQ(bus.cpu.B, cpuCopy.B);
+    ASSERT_EQ(bus.cpu.V, cpuCopy.V);
+}
+
+TEST_F(M6502Test, JSR_CanJumpToSubroutine) {
+    bus.Write(0xFFFC, JSR);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0xFFFE, 0x12);
+
+    bus.Write(0x1242, LDA_IM);
+    bus.Write(0x1243, 0x15);
+    
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(8);
+
+    ASSERT_EQ(bus.cpu.AC, 0x15);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.PC, 0x1244);
+    ASSERT_EQ(bus.cpu.SP, 0x0102);
+
+    EXPECT_FALSE(bus.cpu.Z);
+    EXPECT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.C, cpuCopy.C);
+    ASSERT_EQ(bus.cpu.I, cpuCopy.I);
+    ASSERT_EQ(bus.cpu.D, cpuCopy.D);
+    ASSERT_EQ(bus.cpu.B, cpuCopy.B);
+    ASSERT_EQ(bus.cpu.V, cpuCopy.V);
+}

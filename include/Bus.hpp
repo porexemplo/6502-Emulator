@@ -19,6 +19,7 @@ public:
     Byte Read(uint32_t adress);
 
     void Reset();
+    void ClearMemory();
     void Exec(uint32_t cycles);
 };
 
