@@ -27,7 +27,7 @@ struct CPU {
     Word PC; // Program Counter
     Word SP; // Stack Pointer
 
-    Byte A, X, Y; // Registers
+    Byte AC, X, Y; // Registers
 
     // Status Flags
     Byte C : 1; // Carry Flag
@@ -40,11 +40,12 @@ struct CPU {
 
     // Opcodes
     static constexpr Byte LDA_IM = 0xA9; // LDA Immediate
+    static constexpr Byte LDA_ZP = 0xA5; // LDA Zero Page
 
     void Initialize(Memory& memory) {
         PC = 0xFFFC; // Reset Vector Address (i.e. where the program starts)
         SP = 0x0100; // Stack Pointer starts at 0x0100
-        A = X = Y = 0; // Clear all registers
+        AC = X = Y = 0; // Clear all registers
         C = Z = I = D = B = V = N = 0; // Clear all flags
 
         memory.Initialize();
@@ -57,6 +58,12 @@ struct CPU {
         return data;
     }
 
+    Byte ReadByte(Byte& adress, Memory& memory, unsigned int& cycles) {
+        Byte data = memory[adress];
+        cycles--;
+        return data;
+    }
+
     void Execute(unsigned int cycles, Memory& memory) {
         while (cycles > 0) {
             Byte instruction = FetchByte(memory, cycles);
@@ -64,9 +71,16 @@ struct CPU {
             switch(instruction) {
                 case LDA_IM: {
                     Byte value = FetchByte(memory, cycles);
-                    A = value;
-                    Z = (A == 0);
-                    N = (A & 0b10000000) > 0;
+                    AC = value;
+                    Z = (AC == 0);
+                    N = (AC & 0b10000000) > 0;
+                } break;
+
+                case LDA_ZP: {
+                    Byte zeroPageAddress = FetchByte(memory, cycles);
+                    AC = ReadByte(zeroPageAddress, memory, cycles);
+                    Z = (AC == 0);
+                    N = (AC & 0b10000000) > 0;
                 } break;
 
                 default: {

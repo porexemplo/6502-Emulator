@@ -1,3 +1,10 @@
 {
-    "C_Cpp.default.compilerPath": "/usr/bin/g++"
+    "C_Cpp.default.compilerPath": "/usr/bin/g++",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/root/6502-Emulator",
+            "binaryPath": "/root/6502-Emulator/emulator",
+            "binaryArgs": []
+        }
+    ]
 }
