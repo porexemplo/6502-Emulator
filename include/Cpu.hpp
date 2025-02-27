@@ -28,7 +28,9 @@ public:
 
     void Reset();
     Byte FetchNext();
+    Word FetchWord();
     Byte ReadByte(Byte Address);
+    void WriteWord(Word address, Word value);
     void Execute(uint32_t cycles);
 };
 #endif
