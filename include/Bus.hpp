@@ -20,7 +20,7 @@ public:
 
     void Reset();
     void ClearMemory();
-    void Exec(uint32_t cycles);
+    int32_t Exec(int32_t cycles);
 };
 
 #endif

@@ -14,19 +14,11 @@ void CPU::Reset() {
 }
 
 uint8_t CPU::FetchNext() {
-    if (cycles <= 0) {
-        std::cerr << "No cycles left to fetch byte" << std::endl;
-        exit(1);
-    }
     cycles--;
     return memory[PC++];
 }
 
 Word CPU::FetchWord() {
-    if (cycles <= 0) {
-        std::cerr << "No cycles left to fetch word" << std::endl;
-        exit(1);
-    }
     cycles -= 2;
 
     union {
@@ -50,10 +42,6 @@ Word CPU::FetchWord() {
 }
 
 void CPU::WriteWord(Word address, Word value) {
-    if (cycles <= 0) {
-        std::cerr << "No cycles left to write word" << std::endl;
-        exit(1);
-    }
     cycles -= 2;
 
     union {
@@ -73,15 +61,11 @@ void CPU::WriteWord(Word address, Word value) {
 }
 
 uint8_t CPU::ReadByte(uint8_t address) {
-    if (cycles <= 0) {
-        std::cerr << "No cycles left to read byte" << std::endl;
-        exit(1);
-    }
     cycles--;
     return memory[address];
 }
 
-void CPU::Execute(uint32_t cycles) {
+int32_t CPU::Execute(int32_t cycles) {
     this->cycles = cycles;
     while (this->cycles > 0) {
         Byte instruction = FetchNext();
@@ -109,6 +93,13 @@ void CPU::Execute(uint32_t cycles) {
                 N = (AC & 0b10000000) > 0;
             } break;
 
+            case LDA_ABS: {
+                Word address = FetchWord();
+                AC = ReadByte(address);
+                Z = (AC == 0);
+                N = (AC & 0b10000000) > 0;
+            } break;
+
             case JSR: {
                 Word address = FetchWord();
                 WriteWord(SP, PC - 1);
@@ -123,4 +114,7 @@ void CPU::Execute(uint32_t cycles) {
             } break;
         }
     }
+
+    int32_t cyclesUsed = cycles - this->cycles;
+    return cyclesUsed;
 }

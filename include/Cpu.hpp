@@ -22,7 +22,7 @@ public:
     Byte N : 1; // Negative Flag
 
     Memory& memory;
-    uint32_t cycles;
+    int32_t cycles;
     
     CPU(Memory& mem);
 
@@ -31,6 +31,6 @@ public:
     Word FetchWord();
     Byte ReadByte(Byte Address);
     void WriteWord(Word address, Word value);
-    void Execute(uint32_t cycles);
+    int32_t Execute(int32_t cycles);
 };
 #endif

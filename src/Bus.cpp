@@ -22,6 +22,6 @@ void Bus::ClearMemory() {
     }
 }
 
-void Bus::Exec(uint32_t cycles) {
-    cpu.Execute(cycles);
+int32_t Bus::Exec(int32_t cycles) {
+    return cpu.Execute(cycles);
 }
