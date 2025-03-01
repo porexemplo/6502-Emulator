@@ -50,9 +50,6 @@ TEST_F(M6502Test, CPUCanExecuteMoreCyclesIfRequiredByInstruction) {
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0x0100);
 
-    EXPECT_FALSE(bus.cpu.Z);
-    EXPECT_FALSE(bus.cpu.N);
-
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
 
@@ -70,9 +67,6 @@ TEST_F(M6502Test, LDA_IM_CanLoadValueIntoAccumulator) {
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0x0100);
-
-    EXPECT_FALSE(bus.cpu.Z);
-    EXPECT_FALSE(bus.cpu.N);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -92,9 +86,6 @@ TEST_F(M6502Test, LDA_ZP_CanLoadZeroPageValueIntoAccumulator) {
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0x0100);
-
-    EXPECT_FALSE(bus.cpu.Z);
-    EXPECT_FALSE(bus.cpu.N);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -116,9 +107,6 @@ TEST_F(M6502Test, LDA_ZPX_CanLoadZeroPageValueIntoAccumulatorWithZeroPageX) {
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0x0100);
 
-    EXPECT_FALSE(bus.cpu.Z);
-    EXPECT_FALSE(bus.cpu.N);
-
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
 
@@ -139,41 +127,85 @@ TEST_F(M6502Test, LDA_ZPX_CanLoadZeroPageValueIntoAccumulatorWhenItWraps) {
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0x0100);
 
-    EXPECT_FALSE(bus.cpu.Z);
-    EXPECT_FALSE(bus.cpu.N);
-
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
 
-// TEST_F(M6502Test, LDA_ABS_CanLoadValueIntoAccumulator) {
-//     bus.Write(0xFFFC, LDA_ABS);
-//     bus.Write(0xFFFD, 0x42);
-//     bus.Write(0xFFFE, 0x12);
-//     bus.Write(0x1242, 0x11);
+TEST_F(M6502Test, LDA_ABS_CanLoadValueIntoAccumulator) {
+    bus.Write(0xFFFC, LDA_ABS);
 
-//     CPU cpuCopy = bus.cpu;
-//     bus.Exec(4);
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0xFFFE, 0x44);
 
-//     ASSERT_EQ(bus.cpu.AC, 0x11);
-//     ASSERT_FALSE(bus.cpu.Z);
-//     ASSERT_FALSE(bus.cpu.N);
+    bus.Write(0x4480, 0x11); // Little Endian loading
 
-//     ASSERT_EQ(bus.cpu.cycles, 0);
-//     ASSERT_EQ(bus.cpu.PC, 0x1240);
-//     ASSERT_EQ(bus.cpu.SP, 0x0100);
+    CPU cpuCopy = bus.cpu;
+    int32_t cyclesTaken = bus.Exec(4);
 
-//     EXPECT_FALSE(bus.cpu.Z);
-//     EXPECT_FALSE(bus.cpu.N);
+    ASSERT_EQ(bus.cpu.AC, 0x11);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
 
-//     CheckUnchangedRegisters(bus.cpu, cpuCopy);
-// }
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    // ASSERT_EQ(bus.cpu.PC, 0x1240);
+    // ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+
+    ASSERT_EQ(cyclesTaken, 4);
+}
+
+TEST_F(M6502Test, LDA_ABSX_CanLoadValueIntoAccumulator) {
+    bus.Write(0xFFFC, LDA_ABSX);
+
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.Write(0x4482, 0x11); // Little Endian loading
+
+    bus.cpu.X = 0x02;
+
+    CPU cpuCopy = bus.cpu;
+    int32_t cyclesTaken = bus.Exec(4);
+
+    ASSERT_EQ(bus.cpu.AC, 0x11);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(cyclesTaken, 4);
+}
+
+TEST_F(M6502Test, LDA_ABSX_CanLoadValueIntoAccumulatorWhenItCrossesPageBoundary) {
+    bus.Write(0xFFFC, LDA_ABSX);
+    bus.cpu.X = 0xFF;
+
+    bus.Write(0xFFFD, 0x02);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.Write(0x4501, 0x11); // = 0x4402 + 0xFF which crosses page boundary
+
+
+    CPU cpuCopy = bus.cpu;
+    int32_t cyclesTaken = bus.Exec(5);
+
+    ASSERT_EQ(bus.cpu.AC, 0x11);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(cyclesTaken, 5);
+}
 
 TEST_F(M6502Test, JSR_CanJumpToSubroutine) {
     bus.Write(0xFFFC, JSR);
     bus.Write(0xFFFD, 0x42);
     bus.Write(0xFFFE, 0x12);
 
-    bus.Write(0x1242, LDA_IM);
+    bus.Write(0x1242, LDA_IM); // Little Endian loading, Instruction to execute
     bus.Write(0x1243, 0x15);
     
     CPU cpuCopy = bus.cpu;
@@ -186,9 +218,6 @@ TEST_F(M6502Test, JSR_CanJumpToSubroutine) {
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0x1244);
     ASSERT_EQ(bus.cpu.SP, 0x0102);
-
-    EXPECT_FALSE(bus.cpu.Z);
-    EXPECT_FALSE(bus.cpu.N);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }

@@ -29,7 +29,8 @@ public:
     void Reset();
     Byte FetchNext();
     Word FetchWord();
-    Byte ReadByte(Byte Address);
+    Byte ReadByte(Word Address);
+    Byte ReadByteWithWrap(Byte Address); // For Zero Page Addressing
     void WriteWord(Word address, Word value);
     int32_t Execute(int32_t cycles);
 };

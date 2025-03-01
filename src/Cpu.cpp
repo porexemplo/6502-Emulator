@@ -60,7 +60,12 @@ void CPU::WriteWord(Word address, Word value) {
     }
 }
 
-uint8_t CPU::ReadByte(uint8_t address) {
+Byte CPU::ReadByte(Word address) {
+    cycles--;
+    return memory[address];
+}
+
+Byte CPU::ReadByteWithWrap(Byte address) {
     cycles--;
     return memory[address];
 }
@@ -80,14 +85,14 @@ int32_t CPU::Execute(int32_t cycles) {
 
             case LDA_ZP: {
                 Byte zeroPageAddress = FetchNext();
-                AC = ReadByte(zeroPageAddress);
+                AC = ReadByteWithWrap(zeroPageAddress);
                 Z = (AC == 0);
                 N = (AC & 0b10000000) > 0;
             } break;
 
             case LDA_ZPX: {
                 Byte zeroPageAddress = FetchNext();
-                AC = ReadByte(zeroPageAddress + X);
+                AC = ReadByteWithWrap(zeroPageAddress + X);
                 this->cycles--;
                 Z = (AC == 0);
                 N = (AC & 0b10000000) > 0;

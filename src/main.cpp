@@ -12,6 +12,6 @@ int main() {
     bus.Write(0x1243, 0x15); // Value to load into the accumulator
 
     // Should load 0x84 into the accumulator
-    bus.Exec(7);
+    bus.Exec(8);
     return 0;
 }
