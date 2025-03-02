@@ -79,6 +79,8 @@ Word CPU::ReadWordWithWrap(Byte address) {
         word = memory[address] << 8;
         word |= memory[address + 1];
     }
+
+    return word;
 }
 
 Byte CPU::ReadByte(Word address) {
