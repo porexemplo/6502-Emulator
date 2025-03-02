@@ -19,6 +19,7 @@ public:
     Byte Read(uint32_t adress);
 
     void Reset();
+    void Reset(Word address);
     void ClearMemory();
     int32_t Exec(int32_t cycles);
 };

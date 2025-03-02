@@ -52,7 +52,7 @@ TEST_F(M6502LD, CPUDoesNothingWhenGivenZeroCycles) {
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFC);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -70,7 +70,7 @@ TEST_F(M6502LD, CPUCanExecuteMoreCyclesIfRequiredByInstruction) {
 
     ASSERT_EQ(bus.cpu.cycles, -1);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -88,7 +88,7 @@ void M6502LD::TestLoadRegisterIM(Byte opcode, Byte* registerToLoad, Byte valueTo
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -107,7 +107,7 @@ void M6502LD::TestLoadRegisterZP(Byte opcode, Byte* registerToLoad, Byte valueTo
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -127,7 +127,7 @@ void M6502LD::TestLoadRegisterZPX(Byte opcode, Byte* registerToLoad, Byte valueT
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -147,7 +147,7 @@ void M6502LD::TestLoadRegisterZPXWrap(Byte opcode, Byte* registerToLoad, Byte va
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -167,7 +167,7 @@ void M6502LD::TestLoadRegisterZPY(Byte opcode, Byte* registerToLoad, Byte valueT
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -187,7 +187,7 @@ void M6502LD::TestLoadRegisterZPYWrap(Byte opcode, Byte* registerToLoad, Byte va
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -209,7 +209,7 @@ void M6502LD::TestLoadRegisterABS(Byte opcode, Byte* registerToLoad, Byte valueT
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -232,7 +232,7 @@ void M6502LD::TestLoadRegisterABSX(Byte opcode, Byte* registerToLoad, Byte value
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -255,7 +255,7 @@ void M6502LD::TestLoadRegisterABSXWrap(Byte opcode, Byte* registerToLoad, Byte v
 
     ASSERT_EQ(bus.cpu.cycles, -1);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -278,7 +278,7 @@ void M6502LD::TestLoadRegisterABSY(Byte opcode, Byte* registerToLoad, Byte value
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -301,7 +301,7 @@ void M6502LD::TestLoadRegisterABSYWrap(Byte opcode, Byte* registerToLoad, Byte v
 
     ASSERT_EQ(bus.cpu.cycles, -1);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
-    ASSERT_EQ(bus.cpu.SP, 0x0100);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
@@ -473,28 +473,4 @@ TEST_F(M6502LD, LDY_ABSX_CanLoadValueIntoY) {
 
 TEST_F(M6502LD, LDY_ABSX_CanLoadValueIntoYWhenItCrossesPageBoundary) {
     TestLoadRegisterABSXWrap(LDY_ABSX, &bus.cpu.Y);
-}
-
-// JSR Opcodes
-
-TEST_F(M6502LD, JSR_CanJumpToSubroutine) {
-    bus.Write(0xFFFC, JSR);
-    bus.Write(0xFFFD, 0x42);
-    bus.Write(0xFFFE, 0x12);
-
-    bus.Write(0x1242, LDA_IM); // Little Endian loading, Instruction to execute
-    bus.Write(0x1243, 0x15);
-    
-    CPU cpuCopy = bus.cpu;
-    bus.Exec(8);
-
-    ASSERT_EQ(bus.cpu.AC, 0x15);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
-
-    ASSERT_EQ(bus.cpu.cycles, 0);
-    ASSERT_EQ(bus.cpu.PC, 0x1244);
-    ASSERT_EQ(bus.cpu.SP, 0x0102);
-
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }

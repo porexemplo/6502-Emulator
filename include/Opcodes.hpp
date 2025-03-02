@@ -46,10 +46,8 @@ constexpr Byte STY_ZP   = 0x84; // Store Y Register Zero Page, 3 Cycles
 constexpr Byte STY_ZPX  = 0x94; // Store Y Register Zero Page X, 4 Cycles
 constexpr Byte STY_ABS  = 0x8C; // Store Y Register Absolute, 4 Cycles
 
-// JSR - Jump to Subroutine
+// Jump Instructions
 constexpr Byte JSR  = 0x20; // Jump to Subroutine Absolute, 6 Cycles
-
-// RTS - Return from Subroutine
 constexpr Byte RTS  = 0x60; // Return from Subroutine, 6 Cycles
 
 #endif

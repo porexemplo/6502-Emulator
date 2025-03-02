@@ -27,5 +27,6 @@ void ST_INDX(CPU& cpu);
 void ST_INDY(CPU& cpu);
 
 void INS_JSR(CPU& cpu);
+void INS_RTS(CPU& cpu);
 
 #endif

@@ -16,6 +16,10 @@ void Bus::Reset() {
     cpu.Reset();
 }
 
+void Bus::Reset(Word address) {
+    cpu.Reset(address);
+}
+
 void Bus::ClearMemory() {
     for (uint32_t i = 0; i < Memory::SIZE; i++) {
         memory[i] = 0;

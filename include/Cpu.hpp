@@ -11,7 +11,7 @@
 class CPU {
 public:
     Word PC; // Program Counter
-    Word SP; // Stack Pointer
+    Byte SP; // Stack Pointer
 
     Byte AC, X, Y;  // Registers
     
@@ -30,11 +30,21 @@ public:
     CPU(Memory& mem);
 
     void Reset();
+    void Reset(Word address);
+
+    void PushByte(Byte value);
+    void PopByte(Byte& value);
+    void PushWord(Word value);
+    void PopWord(Word& value);
+    void PushPC();
+    void PopPC();
+
     Byte FetchNext();
     Word FetchWord();
     Byte ReadByte(Word Address);
     Byte ReadByteWithWrap(Byte Address); // For Zero Page Addressing
     Word ReadWordWithWrap(Byte Address); // For Zero Page Addressing
+    Word ReadWord(Word Address);
     void WriteByte(Word address, Byte value);
     void WriteWord(Word address, Word value);
     int32_t Execute(int32_t cycles);

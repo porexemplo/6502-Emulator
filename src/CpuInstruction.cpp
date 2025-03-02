@@ -122,8 +122,13 @@ void ST_INDY(CPU& cpu) {
 
 void INS_JSR(CPU& cpu) {
     Word address = cpu.FetchWord();
-    cpu.WriteWord(cpu.SP, cpu.PC - 1);
-    cpu.SP += 2; // SP is a Byte
+    cpu.PushPC(); // Takes 2 cycles (Writes 2 bytes)
     cpu.PC = address;
-    cpu.cycles--;
+    cpu.cycles--; // For setting PC
+}
+
+void INS_RTS(CPU& cpu) {
+    cpu.PopPC(); // Takes 4 cycles (Reads 2 bytes, Increments SP by 2)
+    cpu.PC++; // Increment PC to point to the next instruction
+    cpu.cycles--; // For the increment
 }

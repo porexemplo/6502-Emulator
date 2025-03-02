@@ -6,10 +6,47 @@ CPU::CPU(Memory& memory): memory(memory) {
 
 void CPU::Reset() {
     PC = 0xFFFC;
-    SP = 0x0100;
+    SP = 0xFF;
     AC = X = Y = 0;
     C = Z = I = D = B = V = N = 0;
     cycles = 0;
+}
+
+void CPU::Reset(Word address) {
+    PC = address;
+    SP = 0xFF;
+    AC = X = Y = 0;
+    C = Z = I = D = B = V = N = 0;
+    cycles = 0;
+}
+
+void CPU::PushByte(Byte value) {
+    WriteByte(0x0100 + SP, value);
+    SP--;
+}
+
+void CPU::PopByte(Byte& value) {
+    value = ReadByte(0x0100 + SP);
+    SP++;
+}
+
+void CPU::PushWord(Word value) {
+    WriteWord(0x0100 + SP - 1, value);
+    SP -= 2;
+}
+
+void CPU::PopWord(Word& value) {
+    value = ReadWord(0x0100 + SP + 1);
+    SP += 2;
+    cycles -= 2; // For incrementing SP
+}
+
+void CPU::PushPC() {
+    PushWord(PC - 1);
+}
+
+void CPU::PopPC() {
+    PopWord(PC);
 }
 
 uint8_t CPU::FetchNext() {
@@ -62,6 +99,29 @@ void CPU::WriteWord(Word address, Word value) {
         memory[address] = value >> 8;
         memory[address + 1] = value & 0xFF;
     }
+}
+
+Word CPU::ReadWord(Word address) {
+    cycles -= 2;
+
+    union {
+        uint32_t i;
+        uint8_t b[4];
+    } littleEndianTest = {0x01020304};
+
+    bool isLittleEndian = littleEndianTest.b[0] == 0x04;
+
+    Word word;
+
+    if (isLittleEndian) {
+        word = memory[address];
+        word |= memory[address + 1] << 8;
+    } else {
+        word = memory[address] << 8;
+        word |= memory[address + 1];
+    }
+
+    return word;
 }
 
 Word CPU::ReadWordWithWrap(Byte address) {
@@ -166,6 +226,8 @@ int32_t CPU::Execute(int32_t cycles) {
             case STA_INDY: { ST_INDY(*this); } break;
 
             case JSR: { INS_JSR(*this); } break;
+
+            case RTS: { INS_RTS(*this); } break;
 
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);
