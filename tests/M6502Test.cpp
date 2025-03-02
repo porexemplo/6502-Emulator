@@ -25,11 +25,17 @@ protected:
 
     void TestLoadRegisterZPY(Byte opcode, Byte* registerToLoad, Byte valueToLoad = 0x42, int32_t cycles = 4);
 
+    void TestLoadRegisterZPYWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad = 0x42, int32_t cycles = 4);
+
     void TestLoadRegisterABS(Byte opcode, Byte* registerToLoad, Byte valueToLoad = 0x37, int32_t cycles = 4);
 
     void TestLoadRegisterABSX(Byte opcode, Byte* registerToLoad, Byte valueToLoad = 0x42, int32_t cycles = 4);
 
+    void TestLoadRegisterABSXWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad = 0x42, int32_t cycles = 4);
+
     void TestLoadRegisterABSY(Byte opcode, Byte* registerToLoad, Byte valueToLoad = 0x42, int32_t cycles = 4);
+
+    void TestLoadRegisterABSYWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad = 0x42, int32_t cycles = 4);
 };
 
 static void CheckUnchangedRegisters(CPU& cpu, CPU& cpuCopy) {
@@ -146,6 +152,46 @@ void M6502Test::TestLoadRegisterZPXWrap(Byte opcode, Byte* registerToLoad, Byte 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
 
+void M6502Test::TestLoadRegisterZPY(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
+    bus.Write(0xFFFC, opcode);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x0045, valueToLoad);
+
+    bus.cpu.Y = 0x03;
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(cycles);
+
+    ASSERT_EQ(*registerToLoad, valueToLoad);
+    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
+    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+}
+
+void M6502Test::TestLoadRegisterZPYWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
+    bus.Write(0xFFFC, opcode);
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0x007F, valueToLoad);
+
+    bus.cpu.Y = 0xFF;
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(cycles);
+
+    ASSERT_EQ(*registerToLoad, valueToLoad);
+    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
+    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+}
+
 void M6502Test::TestLoadRegisterABS(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
     bus.Write(0xFFFC, opcode);
 
@@ -168,12 +214,15 @@ void M6502Test::TestLoadRegisterABS(Byte opcode, Byte* registerToLoad, Byte valu
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
 }
 
-void M6502Test::TestLoadRegisterZPY(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
+void M6502Test::TestLoadRegisterABSX(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
     bus.Write(0xFFFC, opcode);
-    bus.Write(0xFFFD, 0x42);
-    bus.Write(0x0045, valueToLoad);
 
-    bus.cpu.Y = 0x03;
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.cpu.X = 0x02;
+    bus.Write(0x4482, valueToLoad); // Little Endian loading
+
     CPU cpuCopy = bus.cpu;
     bus.Exec(cycles);
 
@@ -182,7 +231,76 @@ void M6502Test::TestLoadRegisterZPY(Byte opcode, Byte* registerToLoad, Byte valu
     ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
-    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFF);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+}
+
+void M6502Test::TestLoadRegisterABSXWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
+    bus.Write(0xFFFC, opcode);
+
+    bus.Write(0xFFFD, 0x02);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.cpu.X = 0xFF;
+    bus.Write(0x4501, valueToLoad); // = 0x4482 + 0xFF which crosses page boundary
+
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(cycles);
+
+    ASSERT_EQ(*registerToLoad, valueToLoad);
+    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
+    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
+
+    ASSERT_EQ(bus.cpu.cycles, -1);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFF);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+}
+
+void M6502Test::TestLoadRegisterABSY(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
+    bus.Write(0xFFFC, opcode);
+
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.cpu.Y = 0x02;
+    bus.Write(0x4482, valueToLoad); // Little Endian loading
+
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(cycles);
+
+    ASSERT_EQ(*registerToLoad, valueToLoad);
+    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
+    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFF);
+    ASSERT_EQ(bus.cpu.SP, 0x0100);
+
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+}
+
+void M6502Test::TestLoadRegisterABSYWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
+    bus.Write(0xFFFC, opcode);
+
+    bus.Write(0xFFFD, 0x02);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.cpu.Y = 0xFF;
+    bus.Write(0x4501, valueToLoad); // = 0x4482 + 0xFF which crosses page boundary
+
+    CPU cpuCopy = bus.cpu;
+    bus.Exec(cycles);
+
+    ASSERT_EQ(*registerToLoad, valueToLoad);
+    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
+    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
+
+    ASSERT_EQ(bus.cpu.cycles, -1);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFF);
     ASSERT_EQ(bus.cpu.SP, 0x0100);
 
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
@@ -211,95 +329,19 @@ TEST_F(M6502Test, LDA_ABS_CanLoadValueIntoAccumulator) {
 }
 
 TEST_F(M6502Test, LDA_ABSX_CanLoadValueIntoAccumulator) {
-    bus.Write(0xFFFC, LDA_ABSX);
-
-    bus.Write(0xFFFD, 0x80);
-    bus.Write(0xFFFE, 0x44);
-
-    bus.cpu.X = 0x02;
-    bus.Write(0x4482, 0x11); // Little Endian loading
-
-
-    CPU cpuCopy = bus.cpu;
-    int32_t cyclesTaken = bus.Exec(4);
-
-    ASSERT_EQ(bus.cpu.AC, 0x11);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
-
-    ASSERT_EQ(bus.cpu.cycles, 0);
-    
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
-    ASSERT_EQ(cyclesTaken, 4);
+    TestLoadRegisterABSX(LDA_ABSX, &bus.cpu.AC);
 }
 
 TEST_F(M6502Test, LDA_ABSX_CanLoadValueIntoAccumulatorWhenItCrossesPageBoundary) {
-    bus.Write(0xFFFC, LDA_ABSX);
-    bus.cpu.X = 0xFF;
-
-    bus.Write(0xFFFD, 0x02);
-    bus.Write(0xFFFE, 0x44);
-
-    bus.Write(0x4501, 0x11); // = 0x4402 + 0xFF which crosses page boundary
-
-
-    CPU cpuCopy = bus.cpu;
-    int32_t cyclesTaken = bus.Exec(5);
-
-    ASSERT_EQ(bus.cpu.AC, 0x11);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
-
-    ASSERT_EQ(bus.cpu.cycles, 0);
-    
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
-    ASSERT_EQ(cyclesTaken, 5);
+    TestLoadRegisterABSXWrap(LDA_ABSX, &bus.cpu.AC);
 }
 
 TEST_F(M6502Test, LDA_ABSY_CanLoadValueIntoAccumulator) {
-    bus.Write(0xFFFC, LDA_ABSY);
-
-    bus.Write(0xFFFD, 0x80);
-    bus.Write(0xFFFE, 0x44);
-
-    bus.Write(0x4482, 0x11); // Little Endian loading
-
-    bus.cpu.Y = 0x02;
-
-    CPU cpuCopy = bus.cpu;
-    int32_t cyclesTaken = bus.Exec(4);
-
-    ASSERT_EQ(bus.cpu.AC, 0x11);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
-
-    ASSERT_EQ(bus.cpu.cycles, 0);
-    
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
-    ASSERT_EQ(cyclesTaken, 4);
+    TestLoadRegisterABSY(LDA_ABSY, &bus.cpu.AC);
 }
 
 TEST_F(M6502Test, LDA_ABSY_CanLoadValueIntoAccumulatorWhenItCrossesPageBoundary) {
-    bus.Write(0xFFFC, LDA_ABSY);
-    bus.cpu.Y = 0xFF;
-
-    bus.Write(0xFFFD, 0x02);
-    bus.Write(0xFFFE, 0x44);
-
-    bus.Write(0x4501, 0x11); // = 0x4402 + 0xFF which crosses page boundary
-
-
-    CPU cpuCopy = bus.cpu;
-    int32_t cyclesTaken = bus.Exec(5);
-
-    ASSERT_EQ(bus.cpu.AC, 0x11);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
-
-    ASSERT_EQ(bus.cpu.cycles, 0);
-    
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
-    ASSERT_EQ(cyclesTaken, 5);
+    TestLoadRegisterABSYWrap(LDA_ABSY, &bus.cpu.AC);
 }
 
 TEST_F(M6502Test, LDA_INDX_CanLoadValueIntoAccumulator) {
@@ -387,8 +429,20 @@ TEST_F(M6502Test, LDX_ZPY_CanLoadZeroPageValueIntoXWithZeroPageY) {
     TestLoadRegisterZPY(LDX_ZPY, &bus.cpu.X);
 }
 
+TEST_F(M6502Test, LDX_ZPY_CanLoadZeroPageValueIntoXWhenItWraps) {
+    TestLoadRegisterZPYWrap(LDX_ZPY, &bus.cpu.X);
+}
+
 TEST_F(M6502Test, LDX_ABS_CanLoadValueIntoX) {
     TestLoadRegisterABS(LDX_ABS, &bus.cpu.X);
+}
+
+TEST_F(M6502Test, LDX_ABSY_CanLoadValueIntoX) {
+    TestLoadRegisterABSY(LDX_ABSY, &bus.cpu.X);
+}
+
+TEST_F(M6502Test, LDX_ABSY_CanLoadValueIntoXWhenItCrossesPageBoundary) {
+    TestLoadRegisterABSYWrap(LDX_ABSY, &bus.cpu.X);
 }
 
 // LDY Opcodes
@@ -411,6 +465,14 @@ TEST_F(M6502Test, LDY_ZPX_CanLoadZeroPageValueIntoYWhenItWraps) {
 
 TEST_F(M6502Test, LDY_ABS_CanLoadValueIntoY) {
     TestLoadRegisterABS(LDY_ABS, &bus.cpu.Y);
+}
+
+TEST_F(M6502Test, LDY_ABSX_CanLoadValueIntoY) {
+    TestLoadRegisterABSX(LDY_ABSX, &bus.cpu.Y);
+}
+
+TEST_F(M6502Test, LDY_ABSX_CanLoadValueIntoYWhenItCrossesPageBoundary) {
+    TestLoadRegisterABSXWrap(LDY_ABSX, &bus.cpu.Y);
 }
 
 // JSR Opcodes

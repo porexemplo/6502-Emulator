@@ -13,6 +13,53 @@ void CPU::Reset() {
     cycles = 0;
 }
 
+void CPU::LDSetFlags(Byte value) {
+    Z = (value == 0);
+    N = (value & 0b10000000) > 0;
+}
+
+void CPU::LD_ZP(Byte& reg) {
+    Byte zeroPageAddress = FetchNext();
+    reg = ReadByteWithWrap(zeroPageAddress);
+    LDSetFlags(reg);
+}
+
+void CPU::LD_ZPX(Byte& reg) {
+    Byte zeroPageAddress = FetchNext();
+    reg = ReadByteWithWrap(zeroPageAddress + X);
+    this->cycles--;
+    LDSetFlags(reg);
+}
+
+void CPU::LD_ZPY(Byte& reg) {
+    Byte zeroPageAddress = FetchNext();
+    reg = ReadByteWithWrap(zeroPageAddress + Y);
+    this->cycles--;
+    LDSetFlags(reg);
+}
+
+void CPU::LD_ABS(Byte& reg) {
+    Word address = FetchWord();
+    reg = ReadByte(address);
+    LDSetFlags(reg);
+}
+
+void CPU::LD_ABSX(Byte& reg) {
+    Word address = FetchWord();
+    reg = ReadByte(address + X);
+    LDSetFlags(reg);
+    if ((address & 0xFF) + X > 0xFF) // If it crosses a page boundary
+        this->cycles--;
+}
+
+void CPU::LD_ABSY(Byte& reg) {
+    Word address = FetchWord();
+    reg = ReadByte(address + Y);
+    LDSetFlags(reg);
+    if ((address & 0xFF) + Y > 0xFF) // If it crosses a page boundary
+        this->cycles--;
+}
+
 uint8_t CPU::FetchNext() {
     cycles--;
     return memory[PC++];
@@ -93,58 +140,48 @@ Byte CPU::ReadByteWithWrap(Byte address) {
     return memory[address];
 }
 
+void CPU::LD_IM(Byte& reg) {
+    reg = FetchNext();
+    LDSetFlags(reg);
+}
+
 int32_t CPU::Execute(int32_t cycles) {
     this->cycles = cycles;
     while (this->cycles > 0) {
         Byte instruction = FetchNext();
 
         switch(instruction) {
-            case LDA_IM: {
-                Byte value = FetchNext();
-                AC = value;
-                Z = (AC == 0);
-                N = (AC & 0b10000000) > 0;
-            } break;
+            case LDA_IM: { LD_IM(AC); } break;
 
-            case LDA_ZP: {
-                Byte zeroPageAddress = FetchNext();
-                AC = ReadByteWithWrap(zeroPageAddress);
-                Z = (AC == 0);
-                N = (AC & 0b10000000) > 0;
-            } break;
+            case LDX_IM: { LD_IM(X); } break;
 
-            case LDA_ZPX: {
-                Byte zeroPageAddress = FetchNext();
-                AC = ReadByteWithWrap(zeroPageAddress + X);
-                this->cycles--;
-                Z = (AC == 0);
-                N = (AC & 0b10000000) > 0;
-            } break;
+            case LDY_IM: { LD_IM(Y); } break;
 
-            case LDA_ABS: {
-                Word address = FetchWord();
-                AC = ReadByte(address);
-                Z = (AC == 0);
-                N = (AC & 0b10000000) > 0;
-            } break;
+            case LDA_ZP: { LD_ZP(AC); } break;
 
-            case LDA_ABSX: {
-                Word address = FetchWord();
-                AC = ReadByte(address + X);
-                Z = (AC == 0);
-                N = (AC & 0b10000000) > 0;
-                if ((address & 0xFF) + X > 0xFF) // If it crosses a page boundary
-                    this->cycles--;
-            } break;
+            case LDX_ZP: { LD_ZP(X); } break;
 
-            case LDA_ABSY: {
-                Word address = FetchWord();
-                AC = ReadByte(address + Y);
-                Z = (AC == 0);
-                N = (AC & 0b10000000) > 0;
-                if ((address & 0xFF) + Y > 0xFF) // If it crosses a page boundary
-                    this->cycles--;
-            } break;
+            case LDY_ZP: { LD_ZP(Y); } break;
+
+            case LDA_ZPX: { LD_ZPX(AC); } break;
+
+            case LDX_ZPY: { LD_ZPY(X); } break;
+            
+            case LDY_ZPX: { LD_ZPX(Y); } break;
+
+            case LDA_ABS: { LD_ABS(AC); } break;
+
+            case LDX_ABS: { LD_ABS(X); } break;
+
+            case LDY_ABS: { LD_ABS(Y); } break;
+
+            case LDA_ABSX: { LD_ABSX(AC); } break;
+
+            case LDY_ABSX: { LD_ABSX(Y); } break;
+
+            case LDA_ABSY: { LD_ABSY(AC); } break;
+
+            case LDX_ABSY: { LD_ABSY(X); } break;
 
             case LDA_INDX: {
                 Byte zeroPageAddress = FetchNext();
@@ -152,16 +189,14 @@ int32_t CPU::Execute(int32_t cycles) {
                 this->cycles--;
                 Word address = ReadWordWithWrap(zeroPageAddress);
                 AC = ReadByte(address);
-                Z = (AC == 0);
-                N = (AC & 0b10000000) > 0;
+                LDSetFlags(AC);
             } break;
 
             case LDA_INDY: {
                 Byte zeroPageAddress = FetchNext();
                 Word effectiveAddress = ReadWordWithWrap(zeroPageAddress);
                 AC = ReadByte(effectiveAddress + Y);
-                Z = (AC == 0);
-                N = (AC & 0b10000000) > 0;
+                LDSetFlags(AC);
                 if ((effectiveAddress & 0xFF) + Y > 0xFF) // If it crosses a page boundary
                     this->cycles--;
             } break;
