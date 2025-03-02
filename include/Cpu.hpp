@@ -35,6 +35,7 @@ public:
     Byte ReadByte(Word Address);
     Byte ReadByteWithWrap(Byte Address); // For Zero Page Addressing
     Word ReadWordWithWrap(Byte Address); // For Zero Page Addressing
+    void WriteByte(Word address, Byte value);
     void WriteWord(Word address, Word value);
     int32_t Execute(int32_t cycles);
 };

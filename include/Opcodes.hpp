@@ -27,6 +27,25 @@ constexpr Byte LDY_ZPX  = 0xB4; // Load Y Register Zero Page X, 4 Cycles
 constexpr Byte LDY_ABS  = 0xAC; // Load Y Register Absolute, 4 Cycles
 constexpr Byte LDY_ABSX = 0xBC; // Load Y Register Absolute X, 4+ Cycles
 
+// STA - Store Accumulator
+constexpr Byte STA_ZP   = 0x85; // Store Accumulator Zero Page, 3 Cycles
+constexpr Byte STA_ZPX  = 0x95; // Store Accumulator Zero Page X, 4 Cycles
+constexpr Byte STA_ABS  = 0x8D; // Store Accumulator Absolute, 4 Cycles
+constexpr Byte STA_ABSX = 0x9D; // Store Accumulator Absolute X, 5 Cycles
+constexpr Byte STA_ABSY = 0x99; // Store Accumulator Absolute Y, 5 Cycles
+constexpr Byte STA_INDX = 0x81; // Store Accumulator Indirect X, 6 Cycles
+constexpr Byte STA_INDY = 0x91; // Store Accumulator Indirect Y, 6 Cycles
+
+// STX - Store X Register
+constexpr Byte STX_ZP   = 0x86; // Store X Register Zero Page, 3 Cycles
+constexpr Byte STX_ZPY  = 0x96; // Store X Register Zero Page Y, 4 Cycles
+constexpr Byte STX_ABS  = 0x8E; // Store X Register Absolute, 4 Cycles
+
+// STY - Store Y Register
+constexpr Byte STY_ZP   = 0x84; // Store Y Register Zero Page, 3 Cycles
+constexpr Byte STY_ZPX  = 0x94; // Store Y Register Zero Page X, 4 Cycles
+constexpr Byte STY_ABS  = 0x8C; // Store Y Register Absolute, 4 Cycles
+
 // JSR - Jump to Subroutine
 constexpr Byte JSR  = 0x20; // Jump to Subroutine Absolute, 6 Cycles
 

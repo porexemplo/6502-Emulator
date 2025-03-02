@@ -71,6 +71,55 @@ void LD_INDY(CPU& cpu) {
         cpu.cycles--;
 }
 
+void ST_ZP(CPU& cpu, Byte reg) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    cpu.WriteByte(zeroPageAddress, reg);
+}
+
+void ST_ZPX(CPU& cpu, Byte reg) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    cpu.cycles--;
+    cpu.WriteByte(zeroPageAddress + cpu.X, reg);
+}
+
+void ST_ZPY(CPU& cpu, Byte reg) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    cpu.cycles--;
+    cpu.WriteByte(zeroPageAddress + cpu.Y, reg);
+}
+
+void ST_ABS(CPU& cpu, Byte reg) {
+    Word address = cpu.FetchWord();
+    cpu.WriteByte(address, reg);
+}
+
+void ST_ABSX(CPU& cpu) {
+    Word address = cpu.FetchWord();
+    cpu.cycles--;
+    cpu.WriteByte(address + cpu.X, cpu.AC);
+}
+
+void ST_ABSY(CPU& cpu) {
+    Word address = cpu.FetchWord();
+    cpu.cycles--;
+    cpu.WriteByte(address + cpu.Y, cpu.AC);
+}
+
+void ST_INDX(CPU& cpu) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    zeroPageAddress += cpu.X;
+    cpu.cycles--;
+    Word address = cpu.ReadWordWithWrap(zeroPageAddress);
+    cpu.WriteByte(address, cpu.AC);
+}
+
+void ST_INDY(CPU& cpu) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    Word effectiveAddress = cpu.ReadWordWithWrap(zeroPageAddress);
+    cpu.cycles--;
+    cpu.WriteByte(effectiveAddress + cpu.Y, cpu.AC);
+}
+
 void INS_JSR(CPU& cpu) {
     Word address = cpu.FetchWord();
     cpu.WriteWord(cpu.SP, cpu.PC - 1);

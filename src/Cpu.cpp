@@ -40,6 +40,11 @@ Word CPU::FetchWord() {
     return word;
 }
 
+void CPU::WriteByte(Word address, Byte value) {
+    cycles--;
+    memory[address] = value;
+}
+
 void CPU::WriteWord(Word address, Word value) {
     cycles -= 2;
 
@@ -134,11 +139,37 @@ int32_t CPU::Execute(int32_t cycles) {
 
             case LDA_INDY: { LD_INDY(*this); } break;
 
+            case STA_ZP: { ST_ZP(*this, AC); } break;
+
+            case STX_ZP: { ST_ZP(*this, X); } break;
+
+            case STY_ZP: { ST_ZP(*this, Y); } break;
+
+            case STA_ZPX: { ST_ZPX(*this, AC); } break;
+
+            case STX_ZPY: { ST_ZPY(*this, X); } break;
+
+            case STY_ZPX: { ST_ZPX(*this, Y); } break;
+
+            case STA_ABS: { ST_ABS(*this, AC); } break;
+
+            case STX_ABS: { ST_ABS(*this, X); } break;
+
+            case STY_ABS: { ST_ABS(*this, Y); } break;
+
+            case STA_ABSX: { ST_ABSX(*this); } break;
+
+            case STA_ABSY: { ST_ABSY(*this); } break;
+
+            case STA_INDX: { ST_INDX(*this); } break;
+
+            case STA_INDY: { ST_INDY(*this); } break;
+
             case JSR: { INS_JSR(*this); } break;
 
             default: {
-                throw -1;
                 printf("Instruction not implemented: %02X\n", instruction);
+                throw -1;
             } break;
         }
     }
