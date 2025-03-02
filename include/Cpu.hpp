@@ -4,6 +4,9 @@
 #include "Types.hpp"
 #include "Memory.hpp"
 #include "Opcodes.hpp"
+#include "CpuInstruction.hpp"
+
+#include <iostream>
 
 class CPU {
 public:
@@ -27,7 +30,6 @@ public:
     CPU(Memory& mem);
 
     void Reset();
-    void LDSetFlags(Byte value);
     Byte FetchNext();
     Word FetchWord();
     Byte ReadByte(Word Address);
@@ -35,13 +37,5 @@ public:
     Word ReadWordWithWrap(Byte Address); // For Zero Page Addressing
     void WriteWord(Word address, Word value);
     int32_t Execute(int32_t cycles);
-
-    void LD_IM(Byte& reg);
-    void LD_ZP(Byte& reg);
-    void LD_ZPX(Byte& reg);
-    void LD_ZPY(Byte& reg);
-    void LD_ABS(Byte& reg);
-    void LD_ABSX(Byte& reg);
-    void LD_ABSY(Byte& reg);
 };
 #endif

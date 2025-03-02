@@ -1,5 +1,4 @@
 #include "Cpu.hpp"
-#include <iostream>
 
 CPU::CPU(Memory& memory): memory(memory) {
     Reset();
@@ -11,53 +10,6 @@ void CPU::Reset() {
     AC = X = Y = 0;
     C = Z = I = D = B = V = N = 0;
     cycles = 0;
-}
-
-void CPU::LDSetFlags(Byte value) {
-    Z = (value == 0);
-    N = (value & 0b10000000) > 0;
-}
-
-void CPU::LD_ZP(Byte& reg) {
-    Byte zeroPageAddress = FetchNext();
-    reg = ReadByteWithWrap(zeroPageAddress);
-    LDSetFlags(reg);
-}
-
-void CPU::LD_ZPX(Byte& reg) {
-    Byte zeroPageAddress = FetchNext();
-    reg = ReadByteWithWrap(zeroPageAddress + X);
-    this->cycles--;
-    LDSetFlags(reg);
-}
-
-void CPU::LD_ZPY(Byte& reg) {
-    Byte zeroPageAddress = FetchNext();
-    reg = ReadByteWithWrap(zeroPageAddress + Y);
-    this->cycles--;
-    LDSetFlags(reg);
-}
-
-void CPU::LD_ABS(Byte& reg) {
-    Word address = FetchWord();
-    reg = ReadByte(address);
-    LDSetFlags(reg);
-}
-
-void CPU::LD_ABSX(Byte& reg) {
-    Word address = FetchWord();
-    reg = ReadByte(address + X);
-    LDSetFlags(reg);
-    if ((address & 0xFF) + X > 0xFF) // If it crosses a page boundary
-        this->cycles--;
-}
-
-void CPU::LD_ABSY(Byte& reg) {
-    Word address = FetchWord();
-    reg = ReadByte(address + Y);
-    LDSetFlags(reg);
-    if ((address & 0xFF) + Y > 0xFF) // If it crosses a page boundary
-        this->cycles--;
 }
 
 uint8_t CPU::FetchNext() {
@@ -140,74 +92,49 @@ Byte CPU::ReadByteWithWrap(Byte address) {
     return memory[address];
 }
 
-void CPU::LD_IM(Byte& reg) {
-    reg = FetchNext();
-    LDSetFlags(reg);
-}
-
 int32_t CPU::Execute(int32_t cycles) {
     this->cycles = cycles;
     while (this->cycles > 0) {
         Byte instruction = FetchNext();
 
         switch(instruction) {
-            case LDA_IM: { LD_IM(AC); } break;
+            case LDA_IM: { LD_IM(*this, AC); } break;
 
-            case LDX_IM: { LD_IM(X); } break;
+            case LDX_IM: { LD_IM(*this, X); } break;
 
-            case LDY_IM: { LD_IM(Y); } break;
+            case LDY_IM: { LD_IM(*this, Y); } break;
 
-            case LDA_ZP: { LD_ZP(AC); } break;
+            case LDA_ZP: { LD_ZP(*this, AC); } break;
 
-            case LDX_ZP: { LD_ZP(X); } break;
+            case LDX_ZP: { LD_ZP(*this, X); } break;
 
-            case LDY_ZP: { LD_ZP(Y); } break;
+            case LDY_ZP: { LD_ZP(*this, Y); } break;
 
-            case LDA_ZPX: { LD_ZPX(AC); } break;
+            case LDA_ZPX: { LD_ZPX(*this, AC); } break;
 
-            case LDX_ZPY: { LD_ZPY(X); } break;
+            case LDX_ZPY: { LD_ZPY(*this, X); } break;
             
-            case LDY_ZPX: { LD_ZPX(Y); } break;
+            case LDY_ZPX: { LD_ZPX(*this, Y); } break;
 
-            case LDA_ABS: { LD_ABS(AC); } break;
+            case LDA_ABS: { LD_ABS(*this, AC); } break;
 
-            case LDX_ABS: { LD_ABS(X); } break;
+            case LDX_ABS: { LD_ABS(*this, X); } break;
 
-            case LDY_ABS: { LD_ABS(Y); } break;
+            case LDY_ABS: { LD_ABS(*this, Y); } break;
 
-            case LDA_ABSX: { LD_ABSX(AC); } break;
+            case LDA_ABSX: { LD_ABSX(*this, AC); } break;
 
-            case LDY_ABSX: { LD_ABSX(Y); } break;
+            case LDY_ABSX: { LD_ABSX(*this, Y); } break;
 
-            case LDA_ABSY: { LD_ABSY(AC); } break;
+            case LDA_ABSY: { LD_ABSY(*this, AC); } break;
 
-            case LDX_ABSY: { LD_ABSY(X); } break;
+            case LDX_ABSY: { LD_ABSY(*this, X); } break;
 
-            case LDA_INDX: {
-                Byte zeroPageAddress = FetchNext();
-                zeroPageAddress += X;
-                this->cycles--;
-                Word address = ReadWordWithWrap(zeroPageAddress);
-                AC = ReadByte(address);
-                LDSetFlags(AC);
-            } break;
+            case LDA_INDX: { LD_INDX(*this); } break;
 
-            case LDA_INDY: {
-                Byte zeroPageAddress = FetchNext();
-                Word effectiveAddress = ReadWordWithWrap(zeroPageAddress);
-                AC = ReadByte(effectiveAddress + Y);
-                LDSetFlags(AC);
-                if ((effectiveAddress & 0xFF) + Y > 0xFF) // If it crosses a page boundary
-                    this->cycles--;
-            } break;
+            case LDA_INDY: { LD_INDY(*this); } break;
 
-            case JSR: {
-                Word address = FetchWord();
-                WriteWord(SP, PC - 1);
-                SP += 2; // SP is a Byte
-                PC = address;
-                this->cycles--;
-            } break;
+            case JSR: { INS_JSR(*this); } break;
 
             default: {
                 throw -1;
