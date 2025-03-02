@@ -160,9 +160,9 @@ TEST_F(M6502Test, LDA_ABSX_CanLoadValueIntoAccumulator) {
     bus.Write(0xFFFD, 0x80);
     bus.Write(0xFFFE, 0x44);
 
+    bus.cpu.X = 0x02;
     bus.Write(0x4482, 0x11); // Little Endian loading
 
-    bus.cpu.X = 0x02;
 
     CPU cpuCopy = bus.cpu;
     int32_t cyclesTaken = bus.Exec(4);
@@ -198,6 +198,123 @@ TEST_F(M6502Test, LDA_ABSX_CanLoadValueIntoAccumulatorWhenItCrossesPageBoundary)
     
     CheckUnchangedRegisters(bus.cpu, cpuCopy);
     ASSERT_EQ(cyclesTaken, 5);
+}
+
+TEST_F(M6502Test, LDA_ABSY_CanLoadValueIntoAccumulator) {
+    bus.Write(0xFFFC, LDA_ABSY);
+
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.Write(0x4482, 0x11); // Little Endian loading
+
+    bus.cpu.Y = 0x02;
+
+    CPU cpuCopy = bus.cpu;
+    int32_t cyclesTaken = bus.Exec(4);
+
+    ASSERT_EQ(bus.cpu.AC, 0x11);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(cyclesTaken, 4);
+}
+
+TEST_F(M6502Test, LDA_ABSY_CanLoadValueIntoAccumulatorWhenItCrossesPageBoundary) {
+    bus.Write(0xFFFC, LDA_ABSY);
+    bus.cpu.Y = 0xFF;
+
+    bus.Write(0xFFFD, 0x02);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.Write(0x4501, 0x11); // = 0x4402 + 0xFF which crosses page boundary
+
+
+    CPU cpuCopy = bus.cpu;
+    int32_t cyclesTaken = bus.Exec(5);
+
+    ASSERT_EQ(bus.cpu.AC, 0x11);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(cyclesTaken, 5);
+}
+
+TEST_F(M6502Test, LDA_INDX_CanLoadValueIntoAccumulator) {
+    bus.Write(0xFFFC, LDA_INDX);
+    bus.Write(0xFFFD, 0x02);
+    bus.cpu.X = 0x04;
+
+    bus.Write(0x0006, 0x44);
+    bus.Write(0x0007, 0x12);
+
+    bus.Write(0x1244, 0x11);
+
+    CPU cpuCopy = bus.cpu;
+    int32_t cyclesTaken = bus.Exec(6);
+
+    ASSERT_EQ(bus.cpu.AC, 0x11);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(cyclesTaken, 6);
+}
+
+TEST_F(M6502Test, LDA_INDY_CanLoadValueIntoAccumulator) {
+    bus.Write(0xFFFC, LDA_INDY);
+    bus.Write(0xFFFD, 0x02);
+    bus.cpu.Y = 0x04;
+
+    bus.Write(0x0002, 0x44);
+    bus.Write(0x0003, 0x12);
+
+    bus.Write(0x1248, 0x11);
+
+
+    CPU cpuCopy = bus.cpu;
+    int32_t cyclesTaken = bus.Exec(5);
+
+    ASSERT_EQ(bus.cpu.AC, 0x11);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(cyclesTaken, 5);
+}
+
+TEST_F(M6502Test, LDA_INDY_CanLoadValueIntoAccumulatorWhenItCrossesPageBoundary) {
+    bus.Write(0xFFFC, LDA_INDY);
+    bus.Write(0xFFFD, 0x02);
+    bus.cpu.Y = 0xFF;
+
+    bus.Write(0x0002, 0x02);
+    bus.Write(0x0003, 0x12);
+
+    bus.Write(0x1301, 0x11); // = 0x1202 + 0xFF which crosses page boundary
+
+
+    CPU cpuCopy = bus.cpu;
+    int32_t cyclesTaken = bus.Exec(6);
+
+    ASSERT_EQ(bus.cpu.AC, 0x11);
+    ASSERT_FALSE(bus.cpu.Z);
+    ASSERT_FALSE(bus.cpu.N);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    
+    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(cyclesTaken, 6);
 }
 
 TEST_F(M6502Test, JSR_CanJumpToSubroutine) {

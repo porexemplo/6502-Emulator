@@ -60,6 +60,27 @@ void CPU::WriteWord(Word address, Word value) {
     }
 }
 
+Word CPU::ReadWordWithWrap(Byte address) {
+    cycles -= 2;
+    
+    union {
+        uint32_t i;
+        uint8_t b[4];
+    } littleEndianTest = {0x01020304};
+
+    bool isLittleEndian = littleEndianTest.b[0] == 0x04;
+
+    Word word;
+
+    if (isLittleEndian) {
+        word = memory[address];
+        word |= memory[address + 1] << 8;
+    } else {
+        word = memory[address] << 8;
+        word |= memory[address + 1];
+    }
+}
+
 Byte CPU::ReadByte(Word address) {
     cycles--;
     return memory[address];
@@ -105,6 +126,44 @@ int32_t CPU::Execute(int32_t cycles) {
                 N = (AC & 0b10000000) > 0;
             } break;
 
+            case LDA_ABSX: {
+                Word address = FetchWord();
+                AC = ReadByte(address + X);
+                Z = (AC == 0);
+                N = (AC & 0b10000000) > 0;
+                if ((address & 0xFF) + X > 0xFF) // If it crosses a page boundary
+                    this->cycles--;
+            } break;
+
+            case LDA_ABSY: {
+                Word address = FetchWord();
+                AC = ReadByte(address + Y);
+                Z = (AC == 0);
+                N = (AC & 0b10000000) > 0;
+                if ((address & 0xFF) + Y > 0xFF) // If it crosses a page boundary
+                    this->cycles--;
+            } break;
+
+            case LDA_INDX: {
+                Byte zeroPageAddress = FetchNext();
+                zeroPageAddress += X;
+                this->cycles--;
+                Word address = ReadWordWithWrap(zeroPageAddress);
+                AC = ReadByte(address);
+                Z = (AC == 0);
+                N = (AC & 0b10000000) > 0;
+            } break;
+
+            case LDA_INDY: {
+                Byte zeroPageAddress = FetchNext();
+                Word effectiveAddress = ReadWordWithWrap(zeroPageAddress);
+                AC = ReadByte(effectiveAddress + Y);
+                Z = (AC == 0);
+                N = (AC & 0b10000000) > 0;
+                if ((effectiveAddress & 0xFF) + Y > 0xFF) // If it crosses a page boundary
+                    this->cycles--;
+            } break;
+
             case JSR: {
                 Word address = FetchWord();
                 WriteWord(SP, PC - 1);
@@ -114,8 +173,8 @@ int32_t CPU::Execute(int32_t cycles) {
             } break;
 
             default: {
-                std::cerr << "Instruction not allowed " << static_cast<int>(instruction) << std::endl;
-                exit(1);
+                throw -1;
+                printf("Instruction not implemented: %02X\n", instruction);
             } break;
         }
     }
