@@ -81,7 +81,7 @@ TEST_F(M6502JC, JMP_INDCanJumpToANewLocationInTheProgram) {
     bus.Write(0x8100, 0x21);
     
     CPU cpuCopy = bus.cpu;
-    bus.Exec(3);
+    bus.Exec(5);
 
     ASSERT_EQ(bus.cpu.PC, 0x8100);
     ASSERT_EQ(bus.cpu.cycles, 0);

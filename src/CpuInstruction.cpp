@@ -132,3 +132,12 @@ void INS_RTS(CPU& cpu) {
     cpu.PC++; // Increment PC to point to the next instruction
     cpu.cycles--; // For the increment
 }
+
+void INS_JMP_ABS(CPU& cpu) {
+    cpu.PC = cpu.FetchWord();
+}
+
+void INS_JMP_IND(CPU& cpu) {
+    Word address = cpu.FetchWord();
+    cpu.PC = cpu.ReadWord(address);
+}

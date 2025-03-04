@@ -28,5 +28,7 @@ void ST_INDY(CPU& cpu);
 
 void INS_JSR(CPU& cpu);
 void INS_RTS(CPU& cpu);
+void INS_JMP_ABS(CPU& cpu);
+void INS_JMP_IND(CPU& cpu);
 
 #endif

@@ -231,6 +231,10 @@ int32_t CPU::Execute(int32_t cycles) {
 
             case RTS: { INS_RTS(*this); } break;
 
+            case JMP_ABS: { INS_JMP_ABS(*this); } break;
+
+            case JMP_IND: { INS_JMP_IND(*this); } break;
+
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);
                 throw -1;
