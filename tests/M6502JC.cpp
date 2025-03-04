@@ -1,3 +1,28 @@
+/**
+ * @file M6502JC.cpp
+ * @brief Unit tests for the 6502 CPU emulator's jumping instructions.
+ * 
+ * This file contains tests for various jumping instructions of the 6502 CPU emulator.
+ * The tests are written using the Google Test framework.
+ * 
+ * @author Redwane HAMMAS
+ * 
+ * @class M6502JC
+ * @brief Test fixture for setting up and tearing down the test environment.
+ * 
+ * @test JSR_CanJumpToSubroutine
+ * Tests the JSR (Jump to Subroutine) instruction.
+ * 
+ * @test CanJumpToSubroutineAndJumpBack
+ * Tests the JSR (Jump to Subroutine) and RTS (Return from Subroutine) instructions.
+ * 
+ * @test JMP_ABSCanJumpToANewLocationInTheProgram
+ * Tests the JMP (Jump) instruction with absolute addressing.
+ * 
+ * @test JMP_INDCanJumpToANewLocationInTheProgram
+ * Tests the JMP (Jump) instruction with indirect addressing.
+ */
+
 #include <gtest/gtest.h>
 #include "Bus.hpp"
 

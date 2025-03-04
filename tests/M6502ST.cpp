@@ -1,3 +1,20 @@
+/**
+ * @file M6502ST.cpp
+ * @brief Unit tests for the 6502 CPU store instructions.
+ * 
+ * This file contains a series of unit tests for the 6502 CPU store instructions
+ * using the Google Test framework. The tests verify the correct functionality
+ * of storing values from the CPU registers (A, X, Y) into memory using various
+ * addressing modes (Zero Page, Absolute, Zero Page X, Zero Page Y, Absolute X,
+ * Absolute Y, Indirect X, Indirect Y).
+ * 
+ * The tests are organized in a test fixture class `M6502ST` which sets up and
+ * tears down the test environment, including resetting the bus and clearing
+ * memory. Helper functions are provided to test different addressing modes.
+ * 
+ * @author Redwane HAMMAS
+ */
+
 #include <gtest/gtest.h>
 #include "Bus.hpp"
 

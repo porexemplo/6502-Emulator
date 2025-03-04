@@ -1,3 +1,30 @@
+/**
+ * @file M6502LD.cpp
+ * @brief Unit tests for the 6502 CPU Load Accumulator (LDA), Load X Register (LDX), and Load Y Register (LDY) instructions.
+ * 
+ * This file contains a series of unit tests for verifying the correct functionality of the 6502 CPU's load instructions.
+ * These tests are implemented using the Google Test framework.
+ * 
+ * @author Redwane HAMMAS
+ * 
+ * @class M6502LD
+ * @brief Test fixture for setting up and tearing down the test environment.
+ * 
+ * The tests cover various addressing modes for the LDA, LDX, and LDY instructions, including:
+ * - Immediate
+ * - Zero Page
+ * - Zero Page,X
+ * - Zero Page,Y
+ * - Absolute
+ * - Absolute,X
+ * - Absolute,Y
+ * - Indexed Indirect (LDA only)
+ * - Indirect Indexed (LDA only)
+ * 
+ * Each test ensures that the CPU correctly loads the specified value into the appropriate register (A, X, or Y),
+ * and verifies the CPU's state after execution, including the program counter, stack pointer, and processor status flags.
+ */
+
 #include <gtest/gtest.h>
 #include "Bus.hpp"
 
