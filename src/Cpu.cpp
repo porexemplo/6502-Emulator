@@ -8,7 +8,9 @@ void CPU::Reset() {
     PC = 0xFFFC;
     SP = 0xFF;
     AC = X = Y = 0;
-    C = Z = I = D = B = V = N = 0;
+    // This will give the warning missing initializer for member 'CPU::P::U'
+    // To solve it, we can initialize it like this:
+    P = {0, 0, 0, 0, 0, 0, 0, 0};
     cycles = 0;
 }
 
@@ -16,7 +18,7 @@ void CPU::Reset(Word address) {
     PC = address;
     SP = 0xFF;
     AC = X = Y = 0;
-    C = Z = I = D = B = V = N = 0;
+    P = {0, 0, 0, 0, 0, 0, 0, 0};
     cycles = 0;
 }
 

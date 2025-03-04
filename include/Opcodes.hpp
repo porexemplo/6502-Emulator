@@ -49,5 +49,7 @@ constexpr Byte STY_ABS  = 0x8C; // Store Y Register Absolute, 4 Cycles
 // Jump Instructions
 constexpr Byte JSR  = 0x20; // Jump to Subroutine Absolute, 6 Cycles
 constexpr Byte RTS  = 0x60; // Return from Subroutine, 6 Cycles
+constexpr Byte JMP_ABS = 0x4C; // Jump to Absolute, 3 Cycles
+constexpr Byte JMP_IND = 0x6C; // Jump to Indirect, 5 Cycles
 
 #endif

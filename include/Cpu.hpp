@@ -15,14 +15,20 @@ public:
 
     Byte AC, X, Y;  // Registers
     
-    // Status Flags
-    Byte C : 1; // Carry Flag
-    Byte Z : 1; // Zero Flag
-    Byte I : 1; // Interrupt Disable
-    Byte D : 1; // Decimal Mode
-    Byte B : 1; // Break Command
-    Byte V : 1; // Overflow Flag
-    Byte N : 1; // Negative Flag
+    struct Status {
+        Byte C : 1; // Carry Flag
+        Byte Z : 1; // Zero Flag
+        Byte I : 1; // Interrupt Disable
+        Byte D : 1; // Decimal Mode
+        Byte B : 1; // Break Command
+        Byte U : 1; // Unused
+        Byte V : 1; // Overflow Flag
+        Byte N : 1; // Negative Flag
+
+        bool operator==(const Status& p) const {
+            return C == p.C && Z == p.Z && I == p.I && D == p.D && B == p.B && U == p.U && V == p.V && N == p.N;
+        }
+    } P;
 
     Memory& memory;
     int32_t cycles;

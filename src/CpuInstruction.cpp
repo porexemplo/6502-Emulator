@@ -2,8 +2,8 @@
 #include "Cpu.hpp"
 
 void LDSetFlags(CPU& cpu, Byte value) {
-    cpu.Z = (value == 0);
-    cpu.N = (value & 0b10000000) > 0;
+    cpu.P.Z = (value == 0);
+    cpu.P.N = (value & 0b10000000) > 0;
 }
 
 void LD_IM(CPU& cpu, Byte& reg) {

@@ -38,14 +38,6 @@ protected:
     void TestLoadRegisterABSYWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad = 0x42, int32_t cycles = 4);
 };
 
-static void CheckUnchangedRegisters(CPU& cpu, CPU& cpuCopy) {
-    ASSERT_EQ(cpu.C, cpuCopy.C);
-    ASSERT_EQ(cpu.I, cpuCopy.I);
-    ASSERT_EQ(cpu.D, cpuCopy.D);
-    ASSERT_EQ(cpu.B, cpuCopy.B);
-    ASSERT_EQ(cpu.V, cpuCopy.V);
-}
-
 TEST_F(M6502LD, CPUDoesNothingWhenGivenZeroCycles) {
     CPU cpuCopy = bus.cpu;
     bus.Exec(0);
@@ -54,7 +46,7 @@ TEST_F(M6502LD, CPUDoesNothingWhenGivenZeroCycles) {
     ASSERT_EQ(bus.cpu.PC, 0xFFFC);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 TEST_F(M6502LD, CPUCanExecuteMoreCyclesIfRequiredByInstruction) {
@@ -65,14 +57,14 @@ TEST_F(M6502LD, CPUCanExecuteMoreCyclesIfRequiredByInstruction) {
     bus.Exec(1);
 
     ASSERT_EQ(bus.cpu.AC, 0x42);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
+    ASSERT_FALSE(bus.cpu.P.Z);
+    ASSERT_FALSE(bus.cpu.P.N);
 
     ASSERT_EQ(bus.cpu.cycles, -1);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterIM(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -83,14 +75,12 @@ void M6502LD::TestLoadRegisterIM(Byte opcode, Byte* registerToLoad, Byte valueTo
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterZP(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -102,14 +92,12 @@ void M6502LD::TestLoadRegisterZP(Byte opcode, Byte* registerToLoad, Byte valueTo
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterZPX(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -122,14 +110,12 @@ void M6502LD::TestLoadRegisterZPX(Byte opcode, Byte* registerToLoad, Byte valueT
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterZPXWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -142,14 +128,12 @@ void M6502LD::TestLoadRegisterZPXWrap(Byte opcode, Byte* registerToLoad, Byte va
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterZPY(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -162,14 +146,12 @@ void M6502LD::TestLoadRegisterZPY(Byte opcode, Byte* registerToLoad, Byte valueT
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterZPYWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -182,14 +164,12 @@ void M6502LD::TestLoadRegisterZPYWrap(Byte opcode, Byte* registerToLoad, Byte va
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFE);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterABS(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -204,14 +184,12 @@ void M6502LD::TestLoadRegisterABS(Byte opcode, Byte* registerToLoad, Byte valueT
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterABSX(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -227,14 +205,12 @@ void M6502LD::TestLoadRegisterABSX(Byte opcode, Byte* registerToLoad, Byte value
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterABSXWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -250,14 +226,12 @@ void M6502LD::TestLoadRegisterABSXWrap(Byte opcode, Byte* registerToLoad, Byte v
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, -1);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterABSY(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -273,14 +247,12 @@ void M6502LD::TestLoadRegisterABSY(Byte opcode, Byte* registerToLoad, Byte value
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
 
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502LD::TestLoadRegisterABSYWrap(Byte opcode, Byte* registerToLoad, Byte valueToLoad, int32_t cycles) {
@@ -296,14 +268,13 @@ void M6502LD::TestLoadRegisterABSYWrap(Byte opcode, Byte* registerToLoad, Byte v
     bus.Exec(cycles);
 
     ASSERT_EQ(*registerToLoad, valueToLoad);
-    ASSERT_TRUE(bus.cpu.Z == (valueToLoad == 0));
-    ASSERT_TRUE(bus.cpu.N == (valueToLoad & 0b10000000));
+    ASSERT_TRUE(bus.cpu.P.Z == (valueToLoad == 0));
+    ASSERT_TRUE(bus.cpu.P.N == (valueToLoad & 0b10000000));
 
     ASSERT_EQ(bus.cpu.cycles, -1);
     ASSERT_EQ(bus.cpu.PC, 0xFFFF);
     ASSERT_EQ(bus.cpu.SP, 0xFF);
-
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 // LDA Opcodes
@@ -358,12 +329,12 @@ TEST_F(M6502LD, LDA_INDX_CanLoadValueIntoAccumulator) {
     int32_t cyclesTaken = bus.Exec(6);
 
     ASSERT_EQ(bus.cpu.AC, 0x11);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
+    ASSERT_FALSE(bus.cpu.P.Z);
+    ASSERT_FALSE(bus.cpu.P.N);
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
     ASSERT_EQ(cyclesTaken, 6);
 }
 
@@ -382,12 +353,12 @@ TEST_F(M6502LD, LDA_INDY_CanLoadValueIntoAccumulator) {
     int32_t cyclesTaken = bus.Exec(5);
 
     ASSERT_EQ(bus.cpu.AC, 0x11);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
+    ASSERT_FALSE(bus.cpu.P.Z);
+    ASSERT_FALSE(bus.cpu.P.N);
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
     ASSERT_EQ(cyclesTaken, 5);
 }
 
@@ -406,12 +377,12 @@ TEST_F(M6502LD, LDA_INDY_CanLoadValueIntoAccumulatorWhenItCrossesPageBoundary) {
     int32_t cyclesTaken = bus.Exec(6);
 
     ASSERT_EQ(bus.cpu.AC, 0x11);
-    ASSERT_FALSE(bus.cpu.Z);
-    ASSERT_FALSE(bus.cpu.N);
+    ASSERT_FALSE(bus.cpu.P.Z);
+    ASSERT_FALSE(bus.cpu.P.N);
 
     ASSERT_EQ(bus.cpu.cycles, 0);
     
-    CheckUnchangedRegisters(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
     ASSERT_EQ(cyclesTaken, 6);
 }
 

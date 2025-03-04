@@ -20,16 +20,6 @@ protected:
     void TestStoreRegisterZPY(Byte opcode, Byte* reg, Byte valueToStore, int32_t cycles = 4);
 };
 
-static void CheckUnchangedFlags(CPU& cpu, CPU& cpuCopy) {
-    ASSERT_EQ(cpu.C, cpuCopy.C);
-    ASSERT_EQ(cpu.I, cpuCopy.I);
-    ASSERT_EQ(cpu.D, cpuCopy.D);
-    ASSERT_EQ(cpu.B, cpuCopy.B);
-    ASSERT_EQ(cpu.V, cpuCopy.V);
-    ASSERT_EQ(cpu.N, cpuCopy.N);
-    ASSERT_EQ(cpu.Z, cpuCopy.Z);
-}
-
 void M6502ST::TestStoreRegisterZP(Byte opcode, Byte* reg, Byte valueToStore, int32_t cycles) {
     *reg = valueToStore;
     bus.Write(0xFFFC, opcode);
@@ -43,7 +33,7 @@ void M6502ST::TestStoreRegisterZP(Byte opcode, Byte* reg, Byte valueToStore, int
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    CheckUnchangedFlags(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502ST::TestStoreRegisterABS(Byte opcode, Byte* reg, Byte valueToStore, int32_t cycles) {
@@ -60,7 +50,7 @@ void M6502ST::TestStoreRegisterABS(Byte opcode, Byte* reg, Byte valueToStore, in
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    CheckUnchangedFlags(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502ST::TestStoreRegisterZPX(Byte opcode, Byte* reg, Byte valueToStore, int32_t cycles) {
@@ -78,7 +68,7 @@ void M6502ST::TestStoreRegisterZPX(Byte opcode, Byte* reg, Byte valueToStore, in
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    CheckUnchangedFlags(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 void M6502ST::TestStoreRegisterZPY(Byte opcode, Byte* reg, Byte valueToStore, int32_t cycles) {
@@ -95,7 +85,7 @@ void M6502ST::TestStoreRegisterZPY(Byte opcode, Byte* reg, Byte valueToStore, in
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    CheckUnchangedFlags(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 
@@ -149,7 +139,7 @@ TEST_F(M6502ST, STA_ABSX_CanStoreValueInAbsoluteX) {
     ASSERT_EQ(bus.Read(0x800F), 0x42);
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    CheckUnchangedFlags(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 TEST_F(M6502ST, STA_ABSY_CanStoreValueInAbsoluteX) {
@@ -166,7 +156,7 @@ TEST_F(M6502ST, STA_ABSY_CanStoreValueInAbsoluteX) {
     ASSERT_EQ(bus.Read(0x800F), 0x42);
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    CheckUnchangedFlags(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 TEST_F(M6502ST, STA_INDX_CanStoreValueInIndirectX) {
@@ -187,7 +177,7 @@ TEST_F(M6502ST, STA_INDX_CanStoreValueInIndirectX) {
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    CheckUnchangedFlags(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
 
 TEST_F(M6502ST, STA_INDY_CanStoreValueInIndirectY) {
@@ -208,5 +198,5 @@ TEST_F(M6502ST, STA_INDY_CanStoreValueInIndirectY) {
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    CheckUnchangedFlags(bus.cpu, cpuCopy);
+    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
 }
