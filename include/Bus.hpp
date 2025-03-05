@@ -22,6 +22,7 @@ public:
     void Reset(Word address);
     void ClearMemory();
     int32_t Exec(int32_t cycles);
+    Word Load(Byte* program, uint32_t size);
 };
 
 #endif

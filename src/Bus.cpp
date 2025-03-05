@@ -29,3 +29,21 @@ void Bus::ClearMemory() {
 int32_t Bus::Exec(int32_t cycles) {
     return cpu.Execute(cycles);
 }
+
+Word Bus::Load(Byte* program, uint32_t size) {
+    if (program == nullptr) {
+        std::cerr << "Program is null" << std::endl;
+        return 0;
+    }
+
+    if (size > Memory::SIZE) {
+        std::cerr << "Program is too large" << std::endl;
+        return 0;
+    }
+
+    for (uint32_t i = 0; i < size; i++) {
+        memory[0x02 + i] = program[i];
+    }
+
+    return 0x02;
+}
