@@ -169,3 +169,8 @@ void INS_PLA(CPU& cpu) {
     LDSetFlags(cpu, cpu.AC);
     cpu.cycles -= 2;
 }
+
+void INS_PLP(CPU& cpu) {
+    cpu.PopByte(cpu.PS);
+    cpu.cycles -= 2;
+}

@@ -243,6 +243,8 @@ int32_t CPU::Execute(int32_t cycles) {
 
             case PLA: { INS_PLA(*this); } break;
 
+            case PLP: { INS_PLP(*this); } break;
+
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);
                 throw -1;

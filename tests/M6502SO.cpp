@@ -169,3 +169,17 @@ TEST_F(M6502SO, PLACanSetNegativeFlag) {
     EXPECT_EQ(bus.cpu.PS, 0x80);
     EXPECT_EQ(bus.cpu.P.N, 0b1);
 }
+
+TEST_F(M6502SO, PLPCanPullProcessorStatus) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, PLP);
+    bus.cpu.SP = 0xCD;
+    bus.cpu.PS = 0x00;
+    bus.cpu.WriteWord(0x1CE, 0x7D);
+
+    bus.Exec(4);
+
+    EXPECT_EQ(bus.cpu.cycles, 0);
+    EXPECT_EQ(bus.cpu.PS, 0x7D);
+    EXPECT_EQ(bus.cpu.SP, 0xCE);
+}
