@@ -174,3 +174,61 @@ void INS_PLP(CPU& cpu) {
     cpu.PopByte(cpu.PS);
     cpu.cycles -= 2;
 }
+
+void LOG_IM(CPU& cpu, LogicalOp op) {
+    cpu.AC = CPU::PerformOp(op, cpu.FetchNext(), cpu.AC);
+    LDSetFlags(cpu, cpu.AC);
+}
+
+void LOG_ZP(CPU& cpu, LogicalOp op) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    cpu.AC = CPU::PerformOp(op, cpu.ReadByteWithWrap(zeroPageAddress), cpu.AC);
+    LDSetFlags(cpu, cpu.AC);
+}
+
+void LOG_ZPX(CPU& cpu, LogicalOp op) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    cpu.AC = CPU::PerformOp(op, cpu.ReadByteWithWrap(zeroPageAddress + cpu.X), cpu.AC);
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.AC);
+}
+
+void LOG_ABS(CPU& cpu, LogicalOp op) {
+    Word address = cpu.FetchWord();
+    cpu.AC = CPU::PerformOp(op, cpu.ReadByte(address), cpu.AC);
+    LDSetFlags(cpu, cpu.AC);
+}
+
+void LOG_ABSX(CPU& cpu, LogicalOp op) {
+    Word address = cpu.FetchWord();
+    cpu.AC = CPU::PerformOp(op, cpu.ReadByte(address + cpu.X), cpu.AC);
+    LDSetFlags(cpu, cpu.AC);
+    if ((address & 0xFF) + cpu.X > 0xFF) // If it crosses a page boundary
+        cpu.cycles--;
+}
+
+void LOG_ABSY(CPU& cpu, LogicalOp op) {
+    Word address = cpu.FetchWord();
+    cpu.AC = CPU::PerformOp(op, cpu.ReadByte(address + cpu.Y), cpu.AC);
+    LDSetFlags(cpu, cpu.AC);
+    if ((address & 0xFF) + cpu.Y > 0xFF) // If it crosses a page boundary
+        cpu.cycles--;
+}
+
+void LOG_INDX(CPU& cpu, LogicalOp op) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    zeroPageAddress += cpu.X;
+    cpu.cycles--;
+    Word address = cpu.ReadWordWithWrap(zeroPageAddress);
+    cpu.AC = CPU::PerformOp(op, cpu.ReadByte(address), cpu.AC);
+    LDSetFlags(cpu, cpu.AC);
+}
+
+void LOG_INDY(CPU& cpu, LogicalOp op) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    Word effectiveAddress = cpu.ReadWordWithWrap(zeroPageAddress);
+    cpu.AC = CPU::PerformOp(op, cpu.ReadByte(effectiveAddress + cpu.Y), cpu.AC);
+    LDSetFlags(cpu, cpu.AC);
+    if ((effectiveAddress & 0xFF) + cpu.Y > 0xFF) // If it crosses a page boundary
+        cpu.cycles--;
+}

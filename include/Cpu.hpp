@@ -52,6 +52,9 @@ public:
     Word ReadWord(Word Address);
     void WriteByte(Word address, Byte value);
     void WriteWord(Word address, Word value);
+
+    static Byte PerformOp(LogicalOp op, Byte value, Byte reg);
+
     int32_t Execute(int32_t cycles);
 };
 #endif

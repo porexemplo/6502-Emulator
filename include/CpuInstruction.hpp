@@ -3,6 +3,7 @@
 
 #include "Types.hpp"
 
+enum class LogicalOp;
 class CPU;
 
 void LDSetFlags(CPU& cpu, Byte value);
@@ -37,5 +38,15 @@ void INS_PHA(CPU& cpu);
 void INS_PHP(CPU& cpu);
 void INS_PLA(CPU& cpu);
 void INS_PLP(CPU& cpu);
+
+// AND, ORA, EOR
+void LOG_IM(CPU& cpu, LogicalOp op);
+void LOG_ZP(CPU& cpu, LogicalOp op);
+void LOG_ZPX(CPU& cpu, LogicalOp op);
+void LOG_ABS(CPU& cpu, LogicalOp op);
+void LOG_ABSX(CPU& cpu, LogicalOp op);
+void LOG_ABSY(CPU& cpu, LogicalOp op);
+void LOG_INDX(CPU& cpu, LogicalOp op);
+void LOG_INDY(CPU& cpu, LogicalOp op);
 
 #endif

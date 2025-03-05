@@ -3,6 +3,13 @@
 
 #include "Types.hpp"
 
+// Enum for logical operations
+enum class LogicalOp {
+    AND,
+    ORA,
+    EOR
+};
+
 // LDA - Load Accumulator
 constexpr Byte LDA_IM   = 0xA9; // Load Accumulator Immediate, 2 Cycles
 constexpr Byte LDA_ZP   = 0xA5; // Load Accumulator Zero Page, 3 Cycles
@@ -59,5 +66,33 @@ constexpr Byte PHA = 0x48; // Push Accumulator, 3 Cycles
 constexpr Byte PHP = 0x08; // Push Processor Status, 3 Cycles
 constexpr Byte PLA = 0x68; // Pull Accumulator, 4 Cycles (Sets Z and N)
 constexpr Byte PLP = 0x28; // Pull Processor Status, 4 Cycles (Sets all flags)
+
+// Logical Instructions
+constexpr Byte AND_IM = 0x29; // AND Immediate, 2 Cycles
+constexpr Byte AND_ZP = 0x25; // AND Zero Page, 3 Cycles
+constexpr Byte AND_ZPX = 0x35; // AND Zero Page X, 4 Cycles
+constexpr Byte AND_ABS = 0x2D; // AND Absolute, 4 Cycles
+constexpr Byte AND_ABSX = 0x3D; // AND Absolute X, 4+ Cycles
+constexpr Byte AND_ABSY = 0x39; // AND Absolute Y, 4+ Cycles
+constexpr Byte AND_INDX = 0x21; // AND Indirect X, 6 Cycles
+constexpr Byte AND_INDY = 0x31; // AND Indirect Y, 5+ Cycles
+
+constexpr Byte ORA_IM = 0x09; // ORA Immediate, 2 Cycles
+constexpr Byte ORA_ZP = 0x05; // ORA Zero Page, 3 Cycles
+constexpr Byte ORA_ZPX = 0x15; // ORA Zero Page X, 4 Cycles
+constexpr Byte ORA_ABS = 0x0D; // ORA Absolute, 4 Cycles
+constexpr Byte ORA_ABSX = 0x1D; // ORA Absolute X, 4+ Cycles
+constexpr Byte ORA_ABSY = 0x19; // ORA Absolute Y, 4+ Cycles
+constexpr Byte ORA_INDX = 0x01; // ORA Indirect X, 6 Cycles
+constexpr Byte ORA_INDY = 0x11; // ORA Indirect Y, 5+ Cycles
+
+constexpr Byte EOR_IM = 0x49; // EOR Immediate, 2 Cycles
+constexpr Byte EOR_ZP = 0x45; // EOR Zero Page, 3 Cycles
+constexpr Byte EOR_ZPX = 0x55; // EOR Zero Page X, 4 Cycles
+constexpr Byte EOR_ABS = 0x4D; // EOR Absolute, 4 Cycles
+constexpr Byte EOR_ABSX = 0x5D; // EOR Absolute X, 4+ Cycles
+constexpr Byte EOR_ABSY = 0x59; // EOR Absolute Y, 4+ Cycles
+constexpr Byte EOR_INDX = 0x41; // EOR Indirect X, 6 Cycles
+constexpr Byte EOR_INDY = 0x51; // EOR Indirect Y, 5+ Cycles
 
 #endif

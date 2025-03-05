@@ -77,6 +77,19 @@ Word CPU::FetchWord() {
     return word;
 }
 
+Byte CPU::PerformOp(LogicalOp op, Byte value, Byte reg) {
+    switch (op) {
+        case LogicalOp::AND:
+            return reg & value;
+        case LogicalOp::ORA:
+            return reg | value;
+        case LogicalOp::EOR:
+            return reg ^ value;
+        default:
+            throw -1;
+    }
+}
+
 void CPU::WriteByte(Word address, Byte value) {
     cycles--;
     memory[address] = value;
@@ -244,6 +257,54 @@ int32_t CPU::Execute(int32_t cycles) {
             case PLA: { INS_PLA(*this); } break;
 
             case PLP: { INS_PLP(*this); } break;
+
+            case AND_IM: { LOG_IM(*this, LogicalOp::AND); } break;
+
+            case ORA_IM: { LOG_IM(*this, LogicalOp::ORA); } break;
+
+            case EOR_IM: { LOG_IM(*this, LogicalOp::EOR); } break;
+
+            case AND_ZP: { LOG_ZP(*this, LogicalOp::AND); } break;
+
+            case ORA_ZP: { LOG_ZP(*this, LogicalOp::ORA); } break;
+
+            case EOR_ZP: { LOG_ZP(*this, LogicalOp::EOR); } break;
+
+            case AND_ZPX: { LOG_ZPX(*this, LogicalOp::AND); } break;
+
+            case ORA_ZPX: { LOG_ZPX(*this, LogicalOp::ORA); } break;
+
+            case EOR_ZPX: { LOG_ZPX(*this, LogicalOp::EOR); } break;
+
+            case AND_ABS: { LOG_ABS(*this, LogicalOp::AND); } break;
+
+            case ORA_ABS: { LOG_ABS(*this, LogicalOp::ORA); } break;
+
+            case EOR_ABS: { LOG_ABS(*this, LogicalOp::EOR); } break;
+
+            case AND_ABSX: { LOG_ABSX(*this, LogicalOp::AND); } break;
+
+            case ORA_ABSX: { LOG_ABSX(*this, LogicalOp::ORA); } break;
+
+            case EOR_ABSX: { LOG_ABSX(*this, LogicalOp::EOR); } break;
+
+            case AND_ABSY: { LOG_ABSY(*this, LogicalOp::AND); } break;
+
+            case ORA_ABSY: { LOG_ABSY(*this, LogicalOp::ORA); } break;
+
+            case EOR_ABSY: { LOG_ABSY(*this, LogicalOp::EOR); } break;
+
+            case AND_INDX: { LOG_INDX(*this, LogicalOp::AND); } break;
+
+            case ORA_INDX: { LOG_INDX(*this, LogicalOp::ORA); } break;
+
+            case EOR_INDX: { LOG_INDX(*this, LogicalOp::EOR); } break;
+
+            case AND_INDY: { LOG_INDY(*this, LogicalOp::AND); } break;
+
+            case ORA_INDY: { LOG_INDY(*this, LogicalOp::ORA); } break;
+
+            case EOR_INDY: { LOG_INDY(*this, LogicalOp::EOR); } break;
 
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);
