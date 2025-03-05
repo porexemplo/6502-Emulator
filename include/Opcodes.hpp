@@ -52,4 +52,7 @@ constexpr Byte RTS  = 0x60; // Return from Subroutine, 6 Cycles
 constexpr Byte JMP_ABS = 0x4C; // Jump to Absolute, 3 Cycles
 constexpr Byte JMP_IND = 0x6C; // Jump to Indirect, 5 Cycles
 
+// Stack Instructions
+constexpr Byte TSX = 0xBA; // Transfer Stack Pointer to X, 2 Cycles
+
 #endif

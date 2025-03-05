@@ -31,4 +31,6 @@ void INS_RTS(CPU& cpu);
 void INS_JMP_ABS(CPU& cpu);
 void INS_JMP_IND(CPU& cpu);
 
+void INS_TSX(CPU& cpu);
+
 #endif

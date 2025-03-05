@@ -24,3 +24,38 @@ protected:
         bus.ClearMemory();
     }
 };
+
+TEST_F(M6502SO, TSXCanTransferStackPointerToX) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, TSX);
+    bus.cpu.PS = 0xFF;
+    bus.cpu.SP = 0x10;
+
+    bus.Exec(2);
+
+    EXPECT_EQ(bus.cpu.X, bus.cpu.SP);
+    EXPECT_EQ(bus.cpu.PS, 0x7D);
+    EXPECT_EQ(bus.cpu.X, 0x10);
+}
+
+TEST_F(M6502SO, TSXCanSetZeroFlag) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, TSX);
+    bus.cpu.SP = 0x00;
+
+    bus.Exec(2);
+
+    EXPECT_EQ(bus.cpu.X, bus.cpu.SP);
+    EXPECT_EQ(bus.cpu.P.Z, 1);
+}
+
+TEST_F(M6502SO, TSXCanSetNegativeFlag) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, TSX);
+    bus.cpu.SP = 0xFF;
+
+    bus.Exec(2);
+
+    EXPECT_EQ(bus.cpu.X, bus.cpu.SP);
+    EXPECT_EQ(bus.cpu.P.N, 1);
+}
