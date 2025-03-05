@@ -602,3 +602,117 @@ TEST_F(M6502LG, EOR_INDY_CanLogicalAndValueWithAccumulatorWhenItCrossesPageBound
 TEST_F(M6502LG, ORA_INDY_CanLogicalAndValueWithAccumulatorWhenItCrossesPageBoundary) {
     TestLogicalINDYWrap(LogicalOp::ORA);
 }
+
+TEST_F(M6502LG, BIT_ZP_CanTestBitsOfZeroPageValue) {
+    bus.Write(0xFFFC, BIT_ZP);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x0042, 0xCC);
+
+    bus.cpu.PS = 0x00;
+    bus.cpu.AC = 0xCC;
+    bus.Exec(3);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.P.Z, false);
+    ASSERT_EQ(bus.cpu.P.N, true);
+    ASSERT_EQ(bus.cpu.P.V, true);
+    ASSERT_EQ(bus.cpu.AC, 0xCC);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
+}
+
+TEST_F(M6502LG, BIT_ZP_CanTestBitsOfZeroPageValueWithZeroAccumulator) {
+    bus.Write(0xFFFC, BIT_ZP);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x0042, 0xCC);
+
+    bus.cpu.PS = 0x00;
+    bus.cpu.AC = 0x00;
+    bus.Exec(3);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.P.Z, true);
+    ASSERT_EQ(bus.cpu.P.N, true);
+    ASSERT_EQ(bus.cpu.P.V, true);
+    ASSERT_EQ(bus.cpu.AC, 0x00);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
+}
+
+TEST_F(M6502LG, BIT_ZP_CanTestBitsOfZeroPageValueWithOverflow) {
+    bus.Write(0xFFFC, BIT_ZP);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x0042, 0x43);
+
+    bus.cpu.PS = 0xFF;
+    bus.cpu.AC = 0x42;
+    bus.Exec(3); // Result is 0x42 & 0x43 = 0x42
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.P.Z, false);
+    ASSERT_EQ(bus.cpu.P.N, false);
+    ASSERT_EQ(bus.cpu.P.V, true);
+    ASSERT_EQ(bus.cpu.AC, 0x42);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFE);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
+}
+
+TEST_F(M6502LG, BIT_ABS_CanTestBitsOfAbsoluteValue) {
+    bus.Write(0xFFFC, BIT_ABS);
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.Write(0x4480, 0xCC);
+
+    bus.cpu.PS = 0x00;
+    bus.cpu.AC = 0xCC;
+    bus.Exec(4);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.P.Z, false);
+    ASSERT_EQ(bus.cpu.P.N, true);
+    ASSERT_EQ(bus.cpu.P.V, true);
+    ASSERT_EQ(bus.cpu.AC, 0xCC);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFF);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
+}
+
+TEST_F(M6502LG, BIT_ABS_CanTestBitsOfAbsoluteValueWithZeroAccumulator) {
+    bus.Write(0xFFFC, BIT_ABS);
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.Write(0x4480, 0xCC);
+
+    bus.cpu.PS = 0x00;
+    bus.cpu.AC = 0x00;
+    bus.Exec(4);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.P.Z, true);
+    ASSERT_EQ(bus.cpu.P.N, true);
+    ASSERT_EQ(bus.cpu.P.V, true);
+    ASSERT_EQ(bus.cpu.AC, 0x00);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFF);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
+}
+
+TEST_F(M6502LG, BIT_ABS_CanTestBitsOfAbsoluteValueWithOverflow) {
+    bus.Write(0xFFFC, BIT_ABS);
+    bus.Write(0xFFFD, 0x80);
+    bus.Write(0xFFFE, 0x44);
+
+    bus.Write(0x4480, 0x43);
+
+    bus.cpu.PS = 0xFF;
+    bus.cpu.AC = 0x42;
+    bus.Exec(4); // Result is 0x42 & 0x43 = 0x42
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.cpu.P.Z, false);
+    ASSERT_EQ(bus.cpu.P.N, false);
+    ASSERT_EQ(bus.cpu.P.V, true);
+    ASSERT_EQ(bus.cpu.AC, 0x42);
+    ASSERT_EQ(bus.cpu.PC, 0xFFFF);
+    ASSERT_EQ(bus.cpu.SP, 0xFF);
+}

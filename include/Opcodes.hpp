@@ -95,4 +95,7 @@ constexpr Byte EOR_ABSY = 0x59; // EOR Absolute Y, 4+ Cycles
 constexpr Byte EOR_INDX = 0x41; // EOR Indirect X, 6 Cycles
 constexpr Byte EOR_INDY = 0x51; // EOR Indirect Y, 5+ Cycles
 
+constexpr Byte BIT_ZP = 0x24; // BIT Zero Page, 3 Cycles
+constexpr Byte BIT_ABS = 0x2C; // BIT Absolute, 4 Cycles
+
 #endif

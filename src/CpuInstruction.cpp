@@ -232,3 +232,19 @@ void LOG_INDY(CPU& cpu, LogicalOp op) {
     if ((effectiveAddress & 0xFF) + cpu.Y > 0xFF) // If it crosses a page boundary
         cpu.cycles--;
 }
+
+void INS_BIT_ZP(CPU& cpu) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    Byte value = cpu.ReadByteWithWrap(zeroPageAddress);
+    cpu.P.Z = (cpu.AC & value) == 0;
+    cpu.P.N = (value & 0b10000000) > 0;
+    cpu.P.V = (value & 0b01000000) > 0;
+}
+
+void INS_BIT_ABS(CPU& cpu) {
+    Word address = cpu.FetchWord();
+    Byte value = cpu.ReadByte(address);
+    cpu.P.Z = (cpu.AC & value) == 0;
+    cpu.P.N = (value & 0b10000000) > 0;
+    cpu.P.V = (value & 0b01000000) > 0;
+}

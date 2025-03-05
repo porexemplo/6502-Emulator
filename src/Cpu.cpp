@@ -177,134 +177,72 @@ int32_t CPU::Execute(int32_t cycles) {
 
         switch(instruction) {
             case LDA_IM: { LD_IM(*this, AC); } break;
-
             case LDX_IM: { LD_IM(*this, X); } break;
-
             case LDY_IM: { LD_IM(*this, Y); } break;
-
             case LDA_ZP: { LD_ZP(*this, AC); } break;
-
             case LDX_ZP: { LD_ZP(*this, X); } break;
-
             case LDY_ZP: { LD_ZP(*this, Y); } break;
-
             case LDA_ZPX: { LD_ZPX(*this, AC); } break;
-
             case LDX_ZPY: { LD_ZPY(*this, X); } break;
-            
             case LDY_ZPX: { LD_ZPX(*this, Y); } break;
-
             case LDA_ABS: { LD_ABS(*this, AC); } break;
-
             case LDX_ABS: { LD_ABS(*this, X); } break;
-
             case LDY_ABS: { LD_ABS(*this, Y); } break;
-
             case LDA_ABSX: { LD_ABSX(*this, AC); } break;
-
             case LDY_ABSX: { LD_ABSX(*this, Y); } break;
-
             case LDA_ABSY: { LD_ABSY(*this, AC); } break;
-
             case LDX_ABSY: { LD_ABSY(*this, X); } break;
-
             case LDA_INDX: { LD_INDX(*this); } break;
-
             case LDA_INDY: { LD_INDY(*this); } break;
-
             case STA_ZP: { ST_ZP(*this, AC); } break;
-
             case STX_ZP: { ST_ZP(*this, X); } break;
-
             case STY_ZP: { ST_ZP(*this, Y); } break;
-
             case STA_ZPX: { ST_ZPX(*this, AC); } break;
-
             case STX_ZPY: { ST_ZPY(*this, X); } break;
-
             case STY_ZPX: { ST_ZPX(*this, Y); } break;
-
             case STA_ABS: { ST_ABS(*this, AC); } break;
-
             case STX_ABS: { ST_ABS(*this, X); } break;
-
             case STY_ABS: { ST_ABS(*this, Y); } break;
-
             case STA_ABSX: { ST_ABSX(*this); } break;
-
             case STA_ABSY: { ST_ABSY(*this); } break;
-
             case STA_INDX: { ST_INDX(*this); } break;
-
             case STA_INDY: { ST_INDY(*this); } break;
-
             case JSR: { INS_JSR(*this); } break;
-
             case RTS: { INS_RTS(*this); } break;
-
             case JMP_ABS: { INS_JMP_ABS(*this); } break;
-
             case JMP_IND: { INS_JMP_IND(*this); } break;
-
             case TSX: { INS_TSX(*this); } break;
-
             case TXS: { INS_TXS(*this); } break;
-
             case PHA: { INS_PHA(*this); } break;
-
             case PHP: { INS_PHP(*this); } break;
-
             case PLA: { INS_PLA(*this); } break;
-
             case PLP: { INS_PLP(*this); } break;
-
             case AND_IM: { LOG_IM(*this, LogicalOp::AND); } break;
-
             case ORA_IM: { LOG_IM(*this, LogicalOp::ORA); } break;
-
             case EOR_IM: { LOG_IM(*this, LogicalOp::EOR); } break;
-
             case AND_ZP: { LOG_ZP(*this, LogicalOp::AND); } break;
-
             case ORA_ZP: { LOG_ZP(*this, LogicalOp::ORA); } break;
-
             case EOR_ZP: { LOG_ZP(*this, LogicalOp::EOR); } break;
-
             case AND_ZPX: { LOG_ZPX(*this, LogicalOp::AND); } break;
-
             case ORA_ZPX: { LOG_ZPX(*this, LogicalOp::ORA); } break;
-
             case EOR_ZPX: { LOG_ZPX(*this, LogicalOp::EOR); } break;
-
             case AND_ABS: { LOG_ABS(*this, LogicalOp::AND); } break;
-
             case ORA_ABS: { LOG_ABS(*this, LogicalOp::ORA); } break;
-
             case EOR_ABS: { LOG_ABS(*this, LogicalOp::EOR); } break;
-
             case AND_ABSX: { LOG_ABSX(*this, LogicalOp::AND); } break;
-
             case ORA_ABSX: { LOG_ABSX(*this, LogicalOp::ORA); } break;
-
             case EOR_ABSX: { LOG_ABSX(*this, LogicalOp::EOR); } break;
-
             case AND_ABSY: { LOG_ABSY(*this, LogicalOp::AND); } break;
-
             case ORA_ABSY: { LOG_ABSY(*this, LogicalOp::ORA); } break;
-
             case EOR_ABSY: { LOG_ABSY(*this, LogicalOp::EOR); } break;
-
             case AND_INDX: { LOG_INDX(*this, LogicalOp::AND); } break;
-
             case ORA_INDX: { LOG_INDX(*this, LogicalOp::ORA); } break;
-
             case EOR_INDX: { LOG_INDX(*this, LogicalOp::EOR); } break;
-
             case AND_INDY: { LOG_INDY(*this, LogicalOp::AND); } break;
-
             case ORA_INDY: { LOG_INDY(*this, LogicalOp::ORA); } break;
-
             case EOR_INDY: { LOG_INDY(*this, LogicalOp::EOR); } break;
+            case BIT_ZP: { INS_BIT_ZP(*this); } break;
+            case BIT_ABS: { INS_BIT_ABS(*this); } break;
 
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);

@@ -49,4 +49,7 @@ void LOG_ABSY(CPU& cpu, LogicalOp op);
 void LOG_INDX(CPU& cpu, LogicalOp op);
 void LOG_INDY(CPU& cpu, LogicalOp op);
 
+void INS_BIT_ZP(CPU& cpu);
+void INS_BIT_ABS(CPU& cpu);
+
 #endif
