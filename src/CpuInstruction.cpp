@@ -163,3 +163,9 @@ void INS_PHP(CPU& cpu) {
     cpu.PushByte(cpu.PS);
     cpu.cycles--;
 }
+
+void INS_PLA(CPU& cpu) {
+    cpu.PopByte(cpu.AC);
+    LDSetFlags(cpu, cpu.AC);
+    cpu.cycles -= 2;
+}

@@ -26,7 +26,7 @@ void CPU::PushByte(Byte value) {
 }
 
 void CPU::PopByte(Byte& value) {
-    value = ReadByte(0x0100 + SP);
+    value = ReadByte(0x0100 + SP + 1);
     SP++;
 }
 
@@ -240,6 +240,8 @@ int32_t CPU::Execute(int32_t cycles) {
             case PHA: { INS_PHA(*this); } break;
 
             case PHP: { INS_PHP(*this); } break;
+
+            case PLA: { INS_PLA(*this); } break;
 
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);

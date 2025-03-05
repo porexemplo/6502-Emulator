@@ -35,5 +35,6 @@ void INS_TSX(CPU& cpu);
 void INS_TXS(CPU& cpu);
 void INS_PHA(CPU& cpu);
 void INS_PHP(CPU& cpu);
+void INS_PLA(CPU& cpu);
 
 #endif

@@ -57,5 +57,7 @@ constexpr Byte TSX = 0xBA; // Transfer Stack Pointer to X, 2 Cycles
 constexpr Byte TXS = 0x9A; // Transfer X to Stack Pointer, 2 Cycles
 constexpr Byte PHA = 0x48; // Push Accumulator, 3 Cycles
 constexpr Byte PHP = 0x08; // Push Processor Status, 3 Cycles
+constexpr Byte PLA = 0x68; // Pull Accumulator, 4 Cycles (Sets Z and N)
+constexpr Byte PLP = 0x28; // Pull Processor Status, 4 Cycles (Sets all flags)
 
 #endif

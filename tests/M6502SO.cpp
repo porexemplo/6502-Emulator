@@ -122,3 +122,50 @@ TEST_F(M6502SO, PHPCanPushProcessorStatus) {
     EXPECT_EQ(bus.cpu.SP, 0xEE);
     EXPECT_EQ(bus.cpu.PS, 0x7D);
 }
+
+TEST_F(M6502SO, PLACanPullAccumulator) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, PLA);
+    bus.cpu.SP = 0xCD;
+    bus.cpu.AC = 0x00;
+    bus.cpu.WriteWord(0x1CE, 0x10);
+
+    bus.Exec(4);
+
+    EXPECT_EQ(bus.cpu.cycles, 0);
+    EXPECT_EQ(bus.cpu.AC, 0x10);
+    EXPECT_EQ(bus.cpu.SP, 0xCE);
+    EXPECT_EQ(bus.cpu.PS, 0x00);
+}
+
+TEST_F(M6502SO, PLACanSetZeroFlag) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, PLA);
+    bus.cpu.SP = 0xCD;
+    bus.cpu.AC = 0xF0;
+    bus.cpu.WriteWord(0x1CE, 0x00);
+
+    bus.Exec(4);
+
+    EXPECT_EQ(bus.cpu.cycles, 0);
+    EXPECT_EQ(bus.cpu.AC, 0x00);
+    EXPECT_EQ(bus.cpu.SP, 0xCE);
+    EXPECT_EQ(bus.cpu.PS, 0x02);
+    EXPECT_EQ(bus.cpu.P.Z, 0b1);
+}
+
+TEST_F(M6502SO, PLACanSetNegativeFlag) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, PLA);
+    bus.cpu.SP = 0xCD;
+    bus.cpu.AC = 0x00;
+    bus.cpu.WriteWord(0x1CE, 0b10011000);
+
+    bus.Exec(4);
+
+    EXPECT_EQ(bus.cpu.cycles, 0);
+    EXPECT_EQ(bus.cpu.AC, 0b10011000);
+    EXPECT_EQ(bus.cpu.SP, 0xCE);
+    EXPECT_EQ(bus.cpu.PS, 0x80);
+    EXPECT_EQ(bus.cpu.P.N, 0b1);
+}
