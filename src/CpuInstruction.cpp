@@ -145,15 +145,11 @@ void INS_JMP_IND(CPU& cpu) {
 void INS_TSX(CPU& cpu) {
     cpu.X = cpu.SP;
     LDSetFlags(cpu, cpu.X);
-    // Show all flags :
-    printf("C: %d\n", cpu.P.C);
-    printf("Z: %d\n", cpu.P.Z);
-    printf("I: %d\n", cpu.P.I);
-    printf("D: %d\n", cpu.P.D);
-    printf("B: %d\n", cpu.P.B);
-    printf("U: %d\n", cpu.P.U);
-    printf("V: %d\n", cpu.P.V);
-    printf("N: %d\n", cpu.P.N);
+    cpu.cycles--;
+}
 
+void INS_TXS(CPU& cpu) {
+    cpu.SP = cpu.X;
+    LDSetFlags(cpu, cpu.SP);
     cpu.cycles--;
 }

@@ -8,8 +8,6 @@ void CPU::Reset() {
     PC = 0xFFFC;
     SP = 0xFF;
     AC = X = Y = 0;
-    // This will give the warning missing initializer for member 'CPU::P::U'
-    // To solve it, we can initialize it like this:
     PS = 0x00;
     cycles = 0;
 }
@@ -236,6 +234,8 @@ int32_t CPU::Execute(int32_t cycles) {
             case JMP_IND: { INS_JMP_IND(*this); } break;
 
             case TSX: { INS_TSX(*this); } break;
+
+            case TXS: { INS_TXS(*this); } break;
 
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);

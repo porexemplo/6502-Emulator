@@ -54,5 +54,6 @@ constexpr Byte JMP_IND = 0x6C; // Jump to Indirect, 5 Cycles
 
 // Stack Instructions
 constexpr Byte TSX = 0xBA; // Transfer Stack Pointer to X, 2 Cycles
+constexpr Byte TXS = 0x9A; // Transfer X to Stack Pointer, 2 Cycles
 
 #endif

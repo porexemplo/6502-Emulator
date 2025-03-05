@@ -59,3 +59,38 @@ TEST_F(M6502SO, TSXCanSetNegativeFlag) {
     EXPECT_EQ(bus.cpu.X, bus.cpu.SP);
     EXPECT_EQ(bus.cpu.P.N, 1);
 }
+
+TEST_F(M6502SO, TXSCanTransferXToStackPointer) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, TXS);
+    bus.cpu.PS = 0xFF;
+    bus.cpu.X = 0x10;
+
+    bus.Exec(2);
+
+    EXPECT_EQ(bus.cpu.SP, bus.cpu.X);
+    EXPECT_EQ(bus.cpu.PS, 0x7D);
+    EXPECT_EQ(bus.cpu.SP, 0x10);
+}
+
+TEST_F(M6502SO, TXSCanSetZeroFlag) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, TXS);
+    bus.cpu.X = 0x00;
+
+    bus.Exec(2);
+
+    EXPECT_EQ(bus.cpu.SP, bus.cpu.X);
+    EXPECT_EQ(bus.cpu.P.Z, 1);
+}
+
+TEST_F(M6502SO, TXSCanSetNegativeFlag) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, TXS);
+    bus.cpu.X = 0xFF;
+
+    bus.Exec(2);
+
+    EXPECT_EQ(bus.cpu.SP, bus.cpu.X);
+    EXPECT_EQ(bus.cpu.P.N, 1);
+}
