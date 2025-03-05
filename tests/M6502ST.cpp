@@ -50,7 +50,7 @@ void M6502ST::TestStoreRegisterZP(Byte opcode, Byte* reg, Byte valueToStore, int
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 void M6502ST::TestStoreRegisterABS(Byte opcode, Byte* reg, Byte valueToStore, int32_t cycles) {
@@ -67,7 +67,7 @@ void M6502ST::TestStoreRegisterABS(Byte opcode, Byte* reg, Byte valueToStore, in
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 void M6502ST::TestStoreRegisterZPX(Byte opcode, Byte* reg, Byte valueToStore, int32_t cycles) {
@@ -85,7 +85,7 @@ void M6502ST::TestStoreRegisterZPX(Byte opcode, Byte* reg, Byte valueToStore, in
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 void M6502ST::TestStoreRegisterZPY(Byte opcode, Byte* reg, Byte valueToStore, int32_t cycles) {
@@ -102,7 +102,7 @@ void M6502ST::TestStoreRegisterZPY(Byte opcode, Byte* reg, Byte valueToStore, in
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 
@@ -156,7 +156,7 @@ TEST_F(M6502ST, STA_ABSX_CanStoreValueInAbsoluteX) {
     ASSERT_EQ(bus.Read(0x800F), 0x42);
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 TEST_F(M6502ST, STA_ABSY_CanStoreValueInAbsoluteX) {
@@ -173,7 +173,7 @@ TEST_F(M6502ST, STA_ABSY_CanStoreValueInAbsoluteX) {
     ASSERT_EQ(bus.Read(0x800F), 0x42);
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 TEST_F(M6502ST, STA_INDX_CanStoreValueInIndirectX) {
@@ -194,7 +194,7 @@ TEST_F(M6502ST, STA_INDX_CanStoreValueInIndirectX) {
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 TEST_F(M6502ST, STA_INDY_CanStoreValueInIndirectY) {
@@ -215,5 +215,5 @@ TEST_F(M6502ST, STA_INDY_CanStoreValueInIndirectY) {
 
     ASSERT_EQ(bus.cpu.cycles, 0);
 
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }

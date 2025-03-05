@@ -56,7 +56,7 @@ TEST_F(M6502JC, JSR_CanJumpToSubroutine) {
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.cpu.PC, 0x1244);
     ASSERT_EQ(bus.cpu.SP, 0x00FD);
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 TEST_F(M6502JC, CanJumpToSubroutineAndJumpBack) {
@@ -74,7 +74,7 @@ TEST_F(M6502JC, CanJumpToSubroutineAndJumpBack) {
     bus.Exec(6+6+2);
 
     ASSERT_EQ(bus.cpu.AC, 0x12);
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
 }
 
 TEST_F(M6502JC, JMP_ABSCanJumpToANewLocationInTheProgram) {
@@ -90,7 +90,7 @@ TEST_F(M6502JC, JMP_ABSCanJumpToANewLocationInTheProgram) {
 
     ASSERT_EQ(bus.cpu.PC, 0x8000);
     ASSERT_EQ(bus.cpu.cycles, 0);
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
     ASSERT_EQ(bus.cpu.SP, cpuCopy.SP);
 }
 
@@ -110,6 +110,6 @@ TEST_F(M6502JC, JMP_INDCanJumpToANewLocationInTheProgram) {
 
     ASSERT_EQ(bus.cpu.PC, 0x8100);
     ASSERT_EQ(bus.cpu.cycles, 0);
-    ASSERT_EQ(bus.cpu.P, cpuCopy.P);
+    ASSERT_EQ(bus.cpu.PS, cpuCopy.PS);
     ASSERT_EQ(bus.cpu.SP, cpuCopy.SP);
 }
