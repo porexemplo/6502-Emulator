@@ -153,3 +153,13 @@ void INS_TXS(CPU& cpu) {
     LDSetFlags(cpu, cpu.SP);
     cpu.cycles--;
 }
+
+void INS_PHA(CPU& cpu) {
+    cpu.PushByte(cpu.AC);
+    cpu.cycles--;
+}
+
+void INS_PHP(CPU& cpu) {
+    cpu.PushByte(cpu.PS);
+    cpu.cycles--;
+}

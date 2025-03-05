@@ -55,5 +55,7 @@ constexpr Byte JMP_IND = 0x6C; // Jump to Indirect, 5 Cycles
 // Stack Instructions
 constexpr Byte TSX = 0xBA; // Transfer Stack Pointer to X, 2 Cycles
 constexpr Byte TXS = 0x9A; // Transfer X to Stack Pointer, 2 Cycles
+constexpr Byte PHA = 0x48; // Push Accumulator, 3 Cycles
+constexpr Byte PHP = 0x08; // Push Processor Status, 3 Cycles
 
 #endif

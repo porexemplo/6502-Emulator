@@ -94,3 +94,31 @@ TEST_F(M6502SO, TXSCanSetNegativeFlag) {
     EXPECT_EQ(bus.cpu.SP, bus.cpu.X);
     EXPECT_EQ(bus.cpu.P.N, 1);
 }
+
+TEST_F(M6502SO, PHACanPushAccumulator) {
+    bus.Reset(0xFF10);
+    bus.cpu.PS = 0xFF;
+    bus.Write(0xFF10, PHA);
+    bus.cpu.AC = 0x10;
+
+    bus.Exec(3);
+
+    EXPECT_EQ(bus.cpu.cycles, 0);
+    EXPECT_EQ(bus.cpu.ReadWord(0x1FF), 0x10);
+    EXPECT_EQ(bus.cpu.SP, 0xFE);
+    EXPECT_EQ(bus.cpu.PS, 0xFF);
+}
+
+TEST_F(M6502SO, PHPCanPushProcessorStatus) {
+    bus.Reset(0xFF10);
+    bus.Write(0xFF10, PHP);
+    bus.cpu.SP = 0xEF;
+    bus.cpu.PS = 0x7D;
+
+    bus.Exec(3);
+
+    EXPECT_EQ(bus.cpu.cycles, 0);
+    EXPECT_EQ(bus.cpu.ReadWord(0x1EF), 0x7D);
+    EXPECT_EQ(bus.cpu.SP, 0xEE);
+    EXPECT_EQ(bus.cpu.PS, 0x7D);
+}

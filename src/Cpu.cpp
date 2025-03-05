@@ -237,6 +237,10 @@ int32_t CPU::Execute(int32_t cycles) {
 
             case TXS: { INS_TXS(*this); } break;
 
+            case PHA: { INS_PHA(*this); } break;
+
+            case PHP: { INS_PHP(*this); } break;
+
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);
                 throw -1;

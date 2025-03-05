@@ -33,5 +33,7 @@ void INS_JMP_IND(CPU& cpu);
 
 void INS_TSX(CPU& cpu);
 void INS_TXS(CPU& cpu);
+void INS_PHA(CPU& cpu);
+void INS_PHP(CPU& cpu);
 
 #endif
