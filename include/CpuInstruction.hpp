@@ -58,4 +58,10 @@ void INS_TAY(CPU& cpu);
 void INS_TXA(CPU& cpu);
 void INS_TYA(CPU& cpu);
 
+// Increment and Decrement Instructions
+void INS_INX(CPU& cpu);
+void INS_INY(CPU& cpu);
+void INS_DEX(CPU& cpu);
+void INS_DEY(CPU& cpu);
+
 #endif

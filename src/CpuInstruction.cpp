@@ -272,3 +272,27 @@ void INS_TYA(CPU& cpu) {
     cpu.cycles--;
     LDSetFlags(cpu, cpu.AC);
 }
+
+void INS_INX(CPU& cpu) {
+    cpu.X++;
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.X);
+}
+
+void INS_INY(CPU& cpu) {
+    cpu.Y++;
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.Y);
+}
+
+void INS_DEX(CPU& cpu) {
+    cpu.X--;
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.X);
+}
+
+void INS_DEY(CPU& cpu) {
+    cpu.Y--;
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.Y);
+}

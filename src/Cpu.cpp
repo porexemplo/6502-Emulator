@@ -247,6 +247,10 @@ int32_t CPU::Execute(int32_t cycles) {
             case TAY: { INS_TAY(*this); } break;
             case TXA: { INS_TXA(*this); } break;
             case TYA: { INS_TYA(*this); } break;
+            case INX: { INS_INX(*this); } break;
+            case INY: { INS_INY(*this); } break;
+            case DEX: { INS_DEX(*this); } break;
+            case DEY: { INS_DEY(*this); } break;
 
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);

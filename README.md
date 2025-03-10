@@ -151,6 +151,11 @@ Implemented instructions:
 - `TXA` - `0x8A` (Transfer X to Accumulator, 2 Cycles)
 - `TYA` - `0x98` (Transfer Y to Accumulator, 2 Cycles)
 
+- `INX` - `0xE8` (Increment X Register, 2 Cycles)
+- `INY` - `0xC8` (Increment Y Register, 2 Cycles)
+- `DEX` - `0xCA` (Decrement X Register, 2 Cycles)
+- `DEY` - `0x88` (Decrement Y Register, 2 Cycles)
+
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
