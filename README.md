@@ -146,6 +146,11 @@ Implemented instructions:
 - `BIT_ZP` - `0x24` (BIT Zero Page, 3 Cycles)
 - `BIT_ABS` - `0x2C` (BIT Absolute, 4 Cycles)
 
+- `TAX` - `0xAA` (Transfer Accumulator to X, 2 Cycles)
+- `TAY` - `0xA8` (Transfer Accumulator to Y, 2 Cycles)
+- `TXA` - `0x8A` (Transfer X to Accumulator, 2 Cycles)
+- `TYA` - `0x98` (Transfer Y to Accumulator, 2 Cycles)
+
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
