@@ -156,6 +156,11 @@ Implemented instructions:
 - `DEX` - `0xCA` (Decrement X Register, 2 Cycles)
 - `DEY` - `0x88` (Decrement Y Register, 2 Cycles)
 
+- `DEC_ZP` - `0xC6` (Decrement Zero Page, 5 Cycles)
+- `DEC_ZPX` - `0xD6` (Decrement Zero Page X, 6 Cycles)
+- `DEC_ABS` - `0xCE` (Decrement Absolute, 6 Cycles)
+- `DEC_ABSX` - `0xDE` (Decrement Absolute X, 7 Cycles)
+
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.

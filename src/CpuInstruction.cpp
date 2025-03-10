@@ -1,46 +1,46 @@
 #include "CpuInstruction.hpp"
 #include "Cpu.hpp"
 
-void LDSetFlags(CPU& cpu, Byte value) {
+void UpdateStatusFlags(CPU& cpu, Byte value) {
     cpu.P.Z = (value == 0);
     cpu.P.N = (value & 0b10000000) > 0;
 }
 
 void LD_IM(CPU& cpu, Byte& reg) {
     reg = cpu.FetchNext();
-    LDSetFlags(cpu, reg);
+    UpdateStatusFlags(cpu, reg);
 }
 
 void LD_ZP(CPU& cpu, Byte& reg) {
     Byte zeroPageAddress = cpu.FetchNext();
     reg = cpu.ReadByteWithWrap(zeroPageAddress);
-    LDSetFlags(cpu, reg);
+    UpdateStatusFlags(cpu, reg);
 }
 
 void LD_ZPX(CPU& cpu, Byte& reg) {
     Byte zeroPageAddress = cpu.FetchNext();
     reg = cpu.ReadByteWithWrap(zeroPageAddress + cpu.X);
     cpu.cycles--;
-    LDSetFlags(cpu, reg);
+    UpdateStatusFlags(cpu, reg);
 }
 
 void LD_ZPY(CPU& cpu, Byte& reg) {
     Byte zeroPageAddress = cpu.FetchNext();
     reg = cpu.ReadByteWithWrap(zeroPageAddress + cpu.Y);
     cpu.cycles--;
-    LDSetFlags(cpu, reg);
+    UpdateStatusFlags(cpu, reg);
 }
 
 void LD_ABS(CPU& cpu, Byte& reg) {
     Word address = cpu.FetchWord();
     reg = cpu.ReadByte(address);
-    LDSetFlags(cpu, reg);
+    UpdateStatusFlags(cpu, reg);
 }
 
 void LD_ABSX(CPU& cpu, Byte& reg) {
     Word address = cpu.FetchWord();
     reg = cpu.ReadByte(address + cpu.X);
-    LDSetFlags(cpu, reg);
+    UpdateStatusFlags(cpu, reg);
     if ((address & 0xFF) + cpu.X > 0xFF) // If it crosses a page boundary
         cpu.cycles--;
 }
@@ -48,7 +48,7 @@ void LD_ABSX(CPU& cpu, Byte& reg) {
 void LD_ABSY(CPU& cpu, Byte& reg) {
     Word address = cpu.FetchWord();
     reg = cpu.ReadByte(address + cpu.Y);
-    LDSetFlags(cpu, reg);
+    UpdateStatusFlags(cpu, reg);
     if ((address & 0xFF) + cpu.Y > 0xFF) // If it crosses a page boundary
         cpu.cycles--;
 }
@@ -59,14 +59,14 @@ void LD_INDX(CPU& cpu) {
     cpu.cycles--;
     Word address = cpu.ReadWordWithWrap(zeroPageAddress);
     cpu.AC = cpu.ReadByte(address);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
 }
 
 void LD_INDY(CPU& cpu) {
     Byte zeroPageAddress = cpu.FetchNext();
     Word effectiveAddress = cpu.ReadWordWithWrap(zeroPageAddress);
     cpu.AC = cpu.ReadByte(effectiveAddress + cpu.Y);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
     if ((effectiveAddress & 0xFF) + cpu.Y > 0xFF) // If it crosses a page boundary
         cpu.cycles--;
 }
@@ -144,13 +144,13 @@ void INS_JMP_IND(CPU& cpu) {
 
 void INS_TSX(CPU& cpu) {
     cpu.X = cpu.SP;
-    LDSetFlags(cpu, cpu.X);
+    UpdateStatusFlags(cpu, cpu.X);
     cpu.cycles--;
 }
 
 void INS_TXS(CPU& cpu) {
     cpu.SP = cpu.X;
-    LDSetFlags(cpu, cpu.SP);
+    UpdateStatusFlags(cpu, cpu.SP);
     cpu.cycles--;
 }
 
@@ -166,7 +166,7 @@ void INS_PHP(CPU& cpu) {
 
 void INS_PLA(CPU& cpu) {
     cpu.PopByte(cpu.AC);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
     cpu.cycles -= 2;
 }
 
@@ -177,32 +177,32 @@ void INS_PLP(CPU& cpu) {
 
 void LOG_IM(CPU& cpu, LogicalOp op) {
     cpu.AC = CPU::PerformOp(op, cpu.FetchNext(), cpu.AC);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
 }
 
 void LOG_ZP(CPU& cpu, LogicalOp op) {
     Byte zeroPageAddress = cpu.FetchNext();
     cpu.AC = CPU::PerformOp(op, cpu.ReadByteWithWrap(zeroPageAddress), cpu.AC);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
 }
 
 void LOG_ZPX(CPU& cpu, LogicalOp op) {
     Byte zeroPageAddress = cpu.FetchNext();
     cpu.AC = CPU::PerformOp(op, cpu.ReadByteWithWrap(zeroPageAddress + cpu.X), cpu.AC);
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
 }
 
 void LOG_ABS(CPU& cpu, LogicalOp op) {
     Word address = cpu.FetchWord();
     cpu.AC = CPU::PerformOp(op, cpu.ReadByte(address), cpu.AC);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
 }
 
 void LOG_ABSX(CPU& cpu, LogicalOp op) {
     Word address = cpu.FetchWord();
     cpu.AC = CPU::PerformOp(op, cpu.ReadByte(address + cpu.X), cpu.AC);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
     if ((address & 0xFF) + cpu.X > 0xFF) // If it crosses a page boundary
         cpu.cycles--;
 }
@@ -210,7 +210,7 @@ void LOG_ABSX(CPU& cpu, LogicalOp op) {
 void LOG_ABSY(CPU& cpu, LogicalOp op) {
     Word address = cpu.FetchWord();
     cpu.AC = CPU::PerformOp(op, cpu.ReadByte(address + cpu.Y), cpu.AC);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
     if ((address & 0xFF) + cpu.Y > 0xFF) // If it crosses a page boundary
         cpu.cycles--;
 }
@@ -221,14 +221,14 @@ void LOG_INDX(CPU& cpu, LogicalOp op) {
     cpu.cycles--;
     Word address = cpu.ReadWordWithWrap(zeroPageAddress);
     cpu.AC = CPU::PerformOp(op, cpu.ReadByte(address), cpu.AC);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
 }
 
 void LOG_INDY(CPU& cpu, LogicalOp op) {
     Byte zeroPageAddress = cpu.FetchNext();
     Word effectiveAddress = cpu.ReadWordWithWrap(zeroPageAddress);
     cpu.AC = CPU::PerformOp(op, cpu.ReadByte(effectiveAddress + cpu.Y), cpu.AC);
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
     if ((effectiveAddress & 0xFF) + cpu.Y > 0xFF) // If it crosses a page boundary
         cpu.cycles--;
 }
@@ -252,47 +252,81 @@ void INS_BIT_ABS(CPU& cpu) {
 void INS_TAX(CPU& cpu) {
     cpu.X = cpu.AC;
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.X);
+    UpdateStatusFlags(cpu, cpu.X);
 }
 
 void INS_TAY(CPU& cpu) {
     cpu.Y = cpu.AC;
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.Y);
+    UpdateStatusFlags(cpu, cpu.Y);
 }
 
 void INS_TXA(CPU& cpu) {
     cpu.AC = cpu.X;
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
 }
 
 void INS_TYA(CPU& cpu) {
     cpu.AC = cpu.Y;
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.AC);
+    UpdateStatusFlags(cpu, cpu.AC);
 }
 
 void INS_INX(CPU& cpu) {
     cpu.X++;
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.X);
+    UpdateStatusFlags(cpu, cpu.X);
 }
 
 void INS_INY(CPU& cpu) {
     cpu.Y++;
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.Y);
+    UpdateStatusFlags(cpu, cpu.Y);
 }
 
 void INS_DEX(CPU& cpu) {
     cpu.X--;
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.X);
+    UpdateStatusFlags(cpu, cpu.X);
 }
 
 void INS_DEY(CPU& cpu) {
     cpu.Y--;
     cpu.cycles--;
-    LDSetFlags(cpu, cpu.Y);
+    UpdateStatusFlags(cpu, cpu.Y);
+}
+
+void INS_DEC_ZP(CPU& cpu) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    Byte value = cpu.ReadByteWithWrap(zeroPageAddress);
+    value--; cpu.cycles--;
+    cpu.WriteByte(zeroPageAddress, value);
+    UpdateStatusFlags(cpu, value);
+}
+
+void INS_DEC_ZPX(CPU& cpu) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    zeroPageAddress += cpu.X; cpu.cycles--;
+    Byte value = cpu.ReadByteWithWrap(zeroPageAddress);
+    value--; cpu.cycles--;
+    cpu.WriteByte(zeroPageAddress, value);
+    UpdateStatusFlags(cpu, value);
+}
+
+void INS_DEC_ABS(CPU& cpu) {
+    Word address = cpu.FetchWord();
+    Byte value = cpu.ReadByte(address);
+    value--; cpu.cycles--;
+    cpu.WriteByte(address, value);
+    UpdateStatusFlags(cpu, value);
+}
+
+void INS_DEC_ABSX(CPU& cpu) {
+    Word address = cpu.FetchWord();
+    address += cpu.X; cpu.cycles--;
+    Byte value = cpu.ReadByte(address);
+    value--; cpu.cycles--;
+    cpu.WriteByte(address, value);
+    UpdateStatusFlags(cpu, value);
 }

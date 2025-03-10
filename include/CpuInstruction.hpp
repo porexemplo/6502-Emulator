@@ -6,7 +6,7 @@
 enum class LogicalOp;
 class CPU;
 
-void LDSetFlags(CPU& cpu, Byte value);
+void UpdateStatusFlags(CPU& cpu, Byte value);
 
 void LD_IM(CPU& cpu, Byte& reg);
 void LD_ZP(CPU& cpu, Byte& reg);
@@ -63,5 +63,9 @@ void INS_INX(CPU& cpu);
 void INS_INY(CPU& cpu);
 void INS_DEX(CPU& cpu);
 void INS_DEY(CPU& cpu);
+void INS_DEC_ZP(CPU& cpu);
+void INS_DEC_ZPX(CPU& cpu);
+void INS_DEC_ABS(CPU& cpu);
+void INS_DEC_ABSX(CPU& cpu);
 
 #endif

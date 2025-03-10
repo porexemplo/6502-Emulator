@@ -109,5 +109,9 @@ constexpr Byte INX = 0xE8; // Increment X Register, 2 Cycles, Affects Z and N
 constexpr Byte INY = 0xC8; // Increment Y Register, 2 Cycles, Affects Z and N
 constexpr Byte DEX = 0xCA; // Decrement X Register, 2 Cycles, Affects Z and N
 constexpr Byte DEY = 0x88; // Decrement Y Register, 2 Cycles, Affects Z and N
+constexpr Byte DEC_ZP = 0xC6; // Decrement Zero Page, 5 Cycles, Affects Z and N
+constexpr Byte DEC_ZPX = 0xD6; // Decrement Zero Page X, 6 Cycles, Affects Z and N
+constexpr Byte DEC_ABS = 0xCE; // Decrement Absolute, 6 Cycles, Affects Z and N
+constexpr Byte DEC_ABSX = 0xDE; // Decrement Absolute X, 7 Cycles, Affects Z and N
 
 #endif
