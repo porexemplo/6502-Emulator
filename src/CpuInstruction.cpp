@@ -330,3 +330,37 @@ void INS_DEC_ABSX(CPU& cpu) {
     cpu.WriteByte(address, value);
     UpdateStatusFlags(cpu, value);
 }
+
+void INS_INC_ZP(CPU& cpu) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    Byte value = cpu.ReadByteWithWrap(zeroPageAddress);
+    value++; cpu.cycles--;
+    cpu.WriteByte(zeroPageAddress, value);
+    UpdateStatusFlags(cpu, value);
+}
+
+void INS_INC_ZPX(CPU& cpu) {
+    Byte zeroPageAddress = cpu.FetchNext();
+    zeroPageAddress += cpu.X; cpu.cycles--;
+    Byte value = cpu.ReadByteWithWrap(zeroPageAddress);
+    value++; cpu.cycles--;
+    cpu.WriteByte(zeroPageAddress, value);
+    UpdateStatusFlags(cpu, value);
+}
+
+void INS_INC_ABS(CPU& cpu) {
+    Word address = cpu.FetchWord();
+    Byte value = cpu.ReadByte(address);
+    value++; cpu.cycles--;
+    cpu.WriteByte(address, value);
+    UpdateStatusFlags(cpu, value);
+}
+
+void INS_INC_ABSX(CPU& cpu) {
+    Word address = cpu.FetchWord();
+    address += cpu.X; cpu.cycles--;
+    Byte value = cpu.ReadByte(address);
+    value++; cpu.cycles--;
+    cpu.WriteByte(address, value);
+    UpdateStatusFlags(cpu, value);
+}

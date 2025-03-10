@@ -161,6 +161,11 @@ Implemented instructions:
 - `DEC_ABS` - `0xCE` (Decrement Absolute, 6 Cycles)
 - `DEC_ABSX` - `0xDE` (Decrement Absolute X, 7 Cycles)
 
+- `INC_ZP` - `0xE6` (Increment Zero Page, 5 Cycles)
+- `INC_ZPX` - `0xF6` (Increment Zero Page X, 6 Cycles)
+- `INC_ABS` - `0xEE` (Increment Absolute, 6 Cycles)
+- `INC_ABSX` - `0xFE` (Increment Absolute X, 7 Cycles)
+
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.

@@ -113,5 +113,9 @@ constexpr Byte DEC_ZP = 0xC6; // Decrement Zero Page, 5 Cycles, Affects Z and N
 constexpr Byte DEC_ZPX = 0xD6; // Decrement Zero Page X, 6 Cycles, Affects Z and N
 constexpr Byte DEC_ABS = 0xCE; // Decrement Absolute, 6 Cycles, Affects Z and N
 constexpr Byte DEC_ABSX = 0xDE; // Decrement Absolute X, 7 Cycles, Affects Z and N
+constexpr Byte INC_ZP = 0xE6; // Increment Zero Page, 5 Cycles, Affects Z and N
+constexpr Byte INC_ZPX = 0xF6; // Increment Zero Page X, 6 Cycles, Affects Z and N
+constexpr Byte INC_ABS = 0xEE; // Increment Absolute, 6 Cycles, Affects Z and N
+constexpr Byte INC_ABSX = 0xFE; // Increment Absolute X, 7 Cycles, Affects Z and N
 
 #endif

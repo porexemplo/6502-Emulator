@@ -67,5 +67,9 @@ void INS_DEC_ZP(CPU& cpu);
 void INS_DEC_ZPX(CPU& cpu);
 void INS_DEC_ABS(CPU& cpu);
 void INS_DEC_ABSX(CPU& cpu);
+void INS_INC_ZP(CPU& cpu);
+void INS_INC_ZPX(CPU& cpu);
+void INS_INC_ABS(CPU& cpu);
+void INS_INC_ABSX(CPU& cpu);
 
 #endif

@@ -501,3 +501,159 @@ TEST_F(M6502ID, DECABSXCanDecrementNonZeroNonNegative) {
     ASSERT_EQ(bus.cpu.cycles, 0);
     ASSERT_EQ(bus.Read(0x4352), 0x31);
 }
+
+TEST_F(M6502ID, INCZPCanIncrementNonZeroNonNegative) {
+    bus.Write(0xFFFC, INC_ZP);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x42, 0x32);
+
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(5);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x42), 0x33);
+
+    ASSERT_EQ(bus.cpu.P.Z, false);
+    ASSERT_EQ(bus.cpu.P.N, false);
+}
+
+TEST_F(M6502ID, INCZPCanIncrementToZero) {
+    bus.Write(0xFFFC, INC_ZP);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x42, 0xFF);
+
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(5);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x42), 0x00);
+
+    ASSERT_EQ(bus.cpu.P.Z, true);
+    ASSERT_EQ(bus.cpu.P.N, false);
+}
+
+TEST_F(M6502ID, INCZPCanIncrementNegative) {
+    bus.Write(0xFFFC, INC_ZP);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x42, 0x80);
+
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(5);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x42), 0x81);
+
+    ASSERT_EQ(bus.cpu.P.Z, false);
+    ASSERT_EQ(bus.cpu.P.N, true);
+}
+
+TEST_F(M6502ID, INCZPCanIncrementNegativeToZero) {
+    bus.Write(0xFFFC, INC_ZP);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x42, 0xFF);
+
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(5);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x42), 0x00);
+
+    ASSERT_EQ(bus.cpu.P.Z, true);
+    ASSERT_EQ(bus.cpu.P.N, false);
+}
+
+TEST_F(M6502ID, INCZPXCanIncrementNonZeroNonNegative) {
+    bus.Write(0xFFFC, INC_ZPX);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x44, 0x32);
+
+    bus.cpu.X = 0x02;
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(6);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x44), 0x33);
+
+    ASSERT_EQ(bus.cpu.P.Z, false);
+    ASSERT_EQ(bus.cpu.P.N, false);
+}
+
+TEST_F(M6502ID, INCZPXCanIncrementNonZeroNonNegativeWhenItWraps) {
+    bus.Write(0xFFFC, INC_ZPX);
+    bus.Write(0xFFFD, 0xFC);
+    bus.Write(0x80, 0x32);
+
+    bus.cpu.X = 0x84;
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(6);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x80), 0x33);
+
+    ASSERT_EQ(bus.cpu.P.Z, false);
+    ASSERT_EQ(bus.cpu.P.N, false);
+}
+
+TEST_F(M6502ID, INCZPXCanIncrementToZero) {
+    bus.Write(0xFFFC, INC_ZPX);
+    bus.Write(0xFFFD, 0x42);
+    bus.Write(0x44, 0xFF);
+
+    bus.cpu.X = 0x02;
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(6);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x44), 0x00);
+
+    ASSERT_EQ(bus.cpu.P.Z, true);
+    ASSERT_EQ(bus.cpu.P.N, false);
+}
+
+TEST_F(M6502ID, INCAbsCanIncrementNonZeroNonNegative) {
+    bus.Reset(0xF000);
+    bus.Write(0xF000, INC_ABS);
+    bus.Write(0xF001, 0x42);
+    bus.Write(0xF002, 0x43);
+    bus.Write(0x4342, 0x32);
+
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(6);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x4342), 0x33);
+}
+
+TEST_F(M6502ID, INCABSXCanIncrementNonZeroNonNegative) {
+    bus.Reset(0xF000);
+    bus.Write(0xF000, INC_ABSX);
+    bus.Write(0xF001, 0x42);
+    bus.Write(0xF002, 0x43);
+    bus.Write(0x4352, 0x32);
+
+    bus.cpu.X = 0x10;
+
+    bus.cpu.P.Z = false;
+    bus.cpu.P.N = false;
+
+    bus.Exec(7);
+
+    ASSERT_EQ(bus.cpu.cycles, 0);
+    ASSERT_EQ(bus.Read(0x4352), 0x33);
+}
