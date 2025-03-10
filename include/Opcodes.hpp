@@ -98,4 +98,10 @@ constexpr Byte EOR_INDY = 0x51; // EOR Indirect Y, 5+ Cycles
 constexpr Byte BIT_ZP = 0x24; // BIT Zero Page, 3 Cycles
 constexpr Byte BIT_ABS = 0x2C; // BIT Absolute, 4 Cycles
 
+// Register Transfers
+constexpr Byte TAX = 0xAA; // Transfer Accumulator to X, 2 Cycles, Affects Z and N
+constexpr Byte TAY = 0xA8; // Transfer Accumulator to Y, 2 Cycles, Affects Z and N
+constexpr Byte TXA = 0x8A; // Transfer X to Accumulator, 2 Cycles, Affects Z and N
+constexpr Byte TYA = 0x98; // Transfer Y to Accumulator, 2 Cycles, Affects Z and N
+
 #endif

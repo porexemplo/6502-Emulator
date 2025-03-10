@@ -52,4 +52,10 @@ void LOG_INDY(CPU& cpu, LogicalOp op);
 void INS_BIT_ZP(CPU& cpu);
 void INS_BIT_ABS(CPU& cpu);
 
+// Transfer Instructions
+void INS_TAX(CPU& cpu);
+void INS_TAY(CPU& cpu);
+void INS_TXA(CPU& cpu);
+void INS_TYA(CPU& cpu);
+
 #endif

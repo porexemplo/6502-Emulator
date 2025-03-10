@@ -248,3 +248,27 @@ void INS_BIT_ABS(CPU& cpu) {
     cpu.P.N = (value & 0b10000000) > 0;
     cpu.P.V = (value & 0b01000000) > 0;
 }
+
+void INS_TAX(CPU& cpu) {
+    cpu.X = cpu.AC;
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.X);
+}
+
+void INS_TAY(CPU& cpu) {
+    cpu.Y = cpu.AC;
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.Y);
+}
+
+void INS_TXA(CPU& cpu) {
+    cpu.AC = cpu.X;
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.AC);
+}
+
+void INS_TYA(CPU& cpu) {
+    cpu.AC = cpu.Y;
+    cpu.cycles--;
+    LDSetFlags(cpu, cpu.AC);
+}

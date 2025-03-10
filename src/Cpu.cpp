@@ -243,6 +243,10 @@ int32_t CPU::Execute(int32_t cycles) {
             case EOR_INDY: { LOG_INDY(*this, LogicalOp::EOR); } break;
             case BIT_ZP: { INS_BIT_ZP(*this); } break;
             case BIT_ABS: { INS_BIT_ABS(*this); } break;
+            case TAX: { INS_TAX(*this); } break;
+            case TAY: { INS_TAY(*this); } break;
+            case TXA: { INS_TXA(*this); } break;
+            case TYA: { INS_TYA(*this); } break;
 
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);
