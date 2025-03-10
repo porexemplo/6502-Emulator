@@ -42,8 +42,8 @@ Word Bus::Load(Byte* program, uint32_t size) {
     }
 
     for (uint32_t i = 0; i < size; i++) {
-        memory[0x02 + i] = program[i];
+        memory[0x1000 + i] = program[i];
     }
 
-    return 0x02;
+    return 0x1000;
 }

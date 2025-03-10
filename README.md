@@ -73,6 +73,28 @@ The compiled program can be loaded into the emulator using the following code:
 ```cpp
 Byte program[] = {0xA9, 0xFF, 0x85, 0x90, 0x8D, 0x00, 0x80, 0x49, 0xCC, 0x4C, 0x02, 0x00};
 ```
+
+### Example : A Program That Increments the X Register Indefinitely
+This program will increment the value at memory address `0x0042`, load the X register with the value at memory address `0x0042`, increment the X register, and then jump back to the `START` label.
+
+```assembly
+* = $1000       ; Set the program counter to 0x1000
+LDA #$00        ; Load the accumulator with the value 0x00
+STA $42         ; Store the accumulator value at memory address 0x0042
+
+START:
+    INC $42     ; Increment the value at memory address 0x0042
+    LDX $42     ; Load the X register with the value at memory address 0x0042
+    INX         ; Increment the X register
+    JMP START   ; Jump back to the START label
+```
+
+The compiled program can be loaded into the emulator using the following code:
+
+```cpp
+Byte program[] = {0xA9, 0x00, 0x85, 0x42, 0xE6, 0x42, 0xA6, 0x42, 0xE8, 0x4C, 0x04, 0x10};
+```
+
 ## Progress
 Implemented instructions:
 - `LDA_IM`   - `0xA9` (Load Accumulator Immediate, 2 Cycles)
