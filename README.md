@@ -21,7 +21,7 @@ This project is a C++ emulator (in progress) for the 6502 CPU, which was used in
 To install the emulator, clone the repository and build the project using your preferred C++ compiler.
 
 ```sh
-git clone http
+git clone https://github.com/porexemplo/6502-Emulator
 cd 6502-Emulator
 make
 ```
