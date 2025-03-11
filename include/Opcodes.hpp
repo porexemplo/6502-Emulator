@@ -118,4 +118,14 @@ constexpr Byte INC_ZPX = 0xF6; // Increment Zero Page X, 6 Cycles, Affects Z and
 constexpr Byte INC_ABS = 0xEE; // Increment Absolute, 6 Cycles, Affects Z and N
 constexpr Byte INC_ABSX = 0xFE; // Increment Absolute X, 7 Cycles, Affects Z and N
 
+// Branch Instructions
+constexpr Byte BPL = 0x10; // Branch if Positive, 2+ Cycles
+constexpr Byte BMI = 0x30; // Branch if Negative, 2+ Cycles
+constexpr Byte BVC = 0x50; // Branch if Overflow Clear, 2+ Cycles
+constexpr Byte BVS = 0x70; // Branch if Overflow Set, 2+ Cycles
+constexpr Byte BCC = 0x90; // Branch if Carry Clear, 2+ Cycles
+constexpr Byte BCS = 0xB0; // Branch if Carry Set, 2+ Cycles
+constexpr Byte BNE = 0xD0; // Branch if Not Equal, 2+ Cycles
+constexpr Byte BEQ = 0xF0; // Branch if Equal, 2+ Cycles
+
 #endif

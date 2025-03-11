@@ -364,3 +364,16 @@ void INS_INC_ABSX(CPU& cpu) {
     cpu.WriteByte(address, value);
     UpdateStatusFlags(cpu, value);
 }
+
+void INS_BEQ(CPU& cpu) {
+    Byte offset = cpu.FetchNext();
+    if (!cpu.P.Z) return;
+    cpu.cycles--;
+    const bool crossesPageBoundary = (cpu.PC & 0xFF00) != ((cpu.PC + offset) & 0xFF00);
+
+    if (crossesPageBoundary)
+        cpu.cycles -= 2;
+
+    cpu.PC += static_cast<sByte>(offset);
+
+}

@@ -188,6 +188,8 @@ Implemented instructions:
 - `INC_ABS` - `0xEE` (Increment Absolute, 6 Cycles)
 - `INC_ABSX` - `0xFE` (Increment Absolute X, 7 Cycles)
 
+- `BEQ` - `0xF0` (Branch if Equal, 2+ Cycles)
+
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.

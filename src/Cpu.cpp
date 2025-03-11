@@ -259,6 +259,7 @@ int32_t CPU::Execute(int32_t cycles) {
             case INC_ZPX: { INS_INC_ZPX(*this); } break;
             case INC_ABS: { INS_INC_ABS(*this); } break;
             case INC_ABSX: { INS_INC_ABSX(*this); } break;
+            case BEQ: { INS_BEQ(*this); } break;
 
             default: {
                 printf("Instruction not implemented: %02X\n", instruction);

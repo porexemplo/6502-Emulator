@@ -72,4 +72,7 @@ void INS_INC_ZPX(CPU& cpu);
 void INS_INC_ABS(CPU& cpu);
 void INS_INC_ABSX(CPU& cpu);
 
+// Branching Instructions
+void INS_BEQ(CPU& cpu);
+
 #endif
